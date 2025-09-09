@@ -1,0 +1,125 @@
+{
+  "students": [
+    {
+      "registerNumber": "123456",
+      "password": "password123",
+      "name": "John Doe",
+      "email": "john@christuniversity.in",
+      "department": "computer-science",
+      "phone": "+919876543210",
+      "createdAt": "2025-09-01T10:30:00.000Z"
+    },
+    {
+      "registerNumber": "789012",
+      "password": "student456",
+      "name": "Jane Smith",
+      "email": "jane@christuniversity.in",
+      "department": "information-technology",
+      "phone": "+919876543211",
+      "createdAt": "2025-09-02T14:20:00.000Z"
+    },
+    {
+      "registerNumber": "2362637",
+      "password": "samuel",
+      "name": "Samuel",
+      "email": "samuel@btech.com",
+      "department": "computer-science",
+      "phone": "73377333333",
+      "createdAt": "2025-09-09T14:38:46.091Z"
+    }
+  ],
+  "faculty": [
+    {
+      "employeeId": "FAC001",
+      "password": "faculty123"
+    },
+    {
+      "employeeId": "FAC002",
+      "password": "professor456"
+    }
+  ],
+  "internshipDetails": {
+    "2362637,2362637": {
+      "studentName": "Samuel Joseph",
+      "department": "business",
+      "studentEmail": "sam@btech.come",
+      "companyName": "samuel",
+      "companyType": "consulting",
+      "companyAddress": "samuel",
+      "jobTitle": "ceo",
+      "jobDepartment": "ceo",
+      "workMode": "remote",
+      "stipend": "3000",
+      "startDate": [
+        "2025-09-24",
+        ""
+      ],
+      "endDate": [
+        "2025-10-02",
+        ""
+      ],
+      "jobDescription": "nothing",
+      "supervisorName": "samuel",
+      "supervisorDesignation": "samuel",
+      "supervisorEmail": "samuel@btech.come",
+      "supervisorPhone": "1234567890",
+      "universityDepartment": "",
+      "projectTitle": "",
+      "labName": "",
+      "internshipDuration": "",
+      "projectDescription": "",
+      "mentorName": "",
+      "mentorDesignation": "",
+      "mentorEmail": "",
+      "mentorPhone": "",
+      "expectedDeliverables": "",
+      "learningObjectives": "samuel",
+      "additionalNotes": "samuel\r\n",
+      "internshipType": "offcampus",
+      "offerLetterPath": "C:\\Users\\jstep\\Documents\\GitHub\\IWP_Team11\\uploads\\2362637-1757432439127-736409005.pdf",
+      "offerLetterOriginalName": "2362637-SAMUEL JOSEPH_CompletiionCertificate.pdf",
+      "submittedAt": "2025-09-09T15:40:39.144Z"
+    },
+    "123456,123456": {
+      "studentName": "samuel",
+      "department": "commerce",
+      "studentEmail": "samuel@btech.christ",
+      "companyName": "",
+      "companyType": "",
+      "companyAddress": "",
+      "jobTitle": "",
+      "jobDepartment": "",
+      "workMode": "",
+      "stipend": "",
+      "startDate": [
+        "",
+        "2025-09-25"
+      ],
+      "endDate": [
+        "",
+        "2025-10-03"
+      ],
+      "jobDescription": "",
+      "supervisorName": "",
+      "supervisorDesignation": "",
+      "supervisorEmail": "",
+      "supervisorPhone": "",
+      "universityDepartment": "research-development",
+      "projectTitle": "cyber",
+      "labName": "",
+      "internshipDuration": "6",
+      "projectDescription": "",
+      "mentorName": "samuel",
+      "mentorDesignation": "professor",
+      "mentorEmail": "samuel@btech.christ",
+      "mentorPhone": "",
+      "expectedDeliverables": "",
+      "learningObjectives": "",
+      "additionalNotes": "",
+      "internshipType": "oncampus",
+      "offerLetterPath": null,
+      "offerLetterOriginalName": null,
+      "submittedAt": "2025-09-09T15:26:19.032Z"
+    }
+  }
+}

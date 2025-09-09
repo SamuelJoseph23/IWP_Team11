@@ -688,37 +688,20 @@
     let internshipDetails = null;
     let studentProfile = null;
     
-    // Data store - simulates backend data
+    // Data store - UPDATED: Starting with empty values for fresh user experience
     const dataStore = {
       progressModules: [
-        { id: 1, name: 'Module 1: Introduction to Web Development', status: 'Completed' },
-        { id: 2, name: 'Module 2: Database Management', status: 'Submitted' },
+        { id: 1, name: 'Module 1: Introduction to Web Development', status: 'Pending' },
+        { id: 2, name: 'Module 2: Database Management', status: 'Pending' },
         { id: 3, name: 'Module 3: API Development', status: 'Pending' },
         { id: 4, name: 'Module 4: Testing & Deployment', status: 'Pending' }
       ],
       skillMatrix: {
         labels: ['Agile', 'Communication', 'Action', 'Python', 'Debugging'],
-        data: [4, 3, 3, 5, 4]
+        data: [0, 0, 0, 0, 0] // Start with all skills at 0
       },
-      logs: [
-        {
-          date: '2025-07-08',
-          entry: 'Implemented user-login UI. Learned how design tokens drive consistency. Struggled with responsive breakpoints.'
-        },
-        {
-          date: '2025-07-15',
-          entry: 'Debugged failing test suite in payments module. Introduced logging to trace null pointer.'
-        },
-        {
-          date: '2025-07-22',
-          entry: 'Demoed first feature in sprint review—positive feedback on accessibility compliance. Realized I underestimated QA time.'
-        }
-      ],
-      goals: [
-        { id: 1, text: 'Read two chapters of "Clean Code"', completed: false },
-        { id: 2, text: 'Submit Module 3 for review', completed: false },
-        { id: 3, text: 'Attend weekly stand-up meeting', completed: true }
-      ]
+      logs: [], // Start with empty logs array
+      goals: [] // Start with empty goals array
     };
 
     // Utility functions
@@ -899,11 +882,11 @@
           </div>
           <div class="detail-item">
             <span class="detail-label">Company:</span>
-            <span class="detail-value">${details.companyName || 'N/A'}</span>
+            <span class="detail-value">${details.companyName || details.universityDepartment || 'N/A'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Position:</span>
-            <span class="detail-value">${details.jobTitle || 'N/A'}</span>
+            <span class="detail-value">${details.jobTitle || details.projectTitle || 'N/A'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Duration:</span>
@@ -911,15 +894,15 @@
           </div>
           <div class="detail-item">
             <span class="detail-label">Work Mode:</span>
-            <span class="detail-value">${details.workMode || 'N/A'}</span>
+            <span class="detail-value">${details.workMode || (details.internshipType === 'oncampus' ? 'On Campus' : 'N/A')}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Supervisor:</span>
-            <span class="detail-value">${details.supervisorName || 'N/A'}</span>
+            <span class="detail-value">${details.supervisorName || details.mentorName || 'N/A'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Stipend:</span>
-            <span class="detail-value">${details.stipend ? '₹' + details.stipend : 'Unpaid'}</span>
+            <span class="detail-value">${details.stipend ? '₹' + details.stipend : (details.internshipType === 'oncampus' ? 'Academic Credit' : 'Unpaid')}</span>
           </div>
           <button class="edit-details-btn" onclick="editInternshipDetails()">
             Edit Details
@@ -934,7 +917,7 @@
       container.innerHTML = `
         <div class="no-internship-message">
           <p>No internship details submitted yet.</p>
-          <button class="edit-details-btn" onclick="window.location.href='/internship-type'">
+          <button class="edit-details-btn" onclick="window.location.href='/internship-details'">
             Add Details
           </button>
         </div>
@@ -944,11 +927,11 @@
     // Edit internship details
     function editInternshipDetails() {
       if (confirm('Do you want to edit your internship details? This will redirect you to the form.')) {
-        window.location.href = '/internship-type';
+        window.location.href = '/internship-details';
       }
     }
 
-    // Render functions (keeping existing ones)
+    // Render functions
     function renderProgressModules() {
       const container = document.getElementById('progress-container');
       container.innerHTML = '';
@@ -1057,6 +1040,11 @@
       const container = document.getElementById('logs-container');
       container.innerHTML = '';
       
+      if (dataStore.logs.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px; font-style: italic;">📝 No reflection logs yet. Start by adding your first entry to track your internship journey!</p>';
+        return;
+      }
+      
       // Sort logs by date (newest first)
       const sortedLogs = [...dataStore.logs].sort((a, b) => new Date(b.date) - new Date(a.date));
       
@@ -1071,10 +1059,6 @@
         `;
         container.appendChild(logItem);
       });
-      
-      if (dataStore.logs.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No logs yet. Add your first reflection!</p>';
-      }
     }
 
     function renderGoals() {
@@ -1082,7 +1066,7 @@
       container.innerHTML = '';
       
       if (dataStore.goals.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No goals set yet. Add your first goal!</p>';
+        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px; font-style: italic;">🎯 No goals set yet. Add your first goal to start tracking your progress!</p>';
         return;
       }
       
@@ -1250,6 +1234,7 @@
     // Initialize dashboard when DOM is loaded
     document.addEventListener('DOMContentLoaded', initDashboard);
 </script>
+
 
 </body>
 </html>

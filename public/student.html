@@ -472,6 +472,16 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('input', hideMessage);
     });
 });
+
+// In student.html, update the login success redirect:
+res.json({ 
+  success: true, 
+  message: 'Student login successful!',
+  registerNumber: registerNumber,
+  redirectUrl: hasDetails ? '/student-dashboard' : '/internship-details', // Updated route
+  hasInternshipDetails: hasDetails
+});
+
 </script>
 
 

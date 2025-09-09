@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Off Campus Internship Details - Christ University</title>
+    <title>Internship Details - Christ University</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -120,20 +120,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .back-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            margin-bottom: 24px;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: var(--primary);
-            transform: translateX(-3px);
-        }
-
         .details-title {
             font-size: 28px;
             font-weight: 700;
@@ -155,8 +141,69 @@
             line-height: 1.5;
         }
 
+        /* Internship Type Selection */
+        .type-selection {
+            margin-bottom: 32px;
+            padding: 20px;
+            background: var(--secondary);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .type-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: var(--background);
+            border: 2px solid #E5E7EB;
+        }
+
+        .radio-option:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+        }
+
+        .radio-option.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #EBF8FF, var(--background));
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .radio-option label {
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        /* Form Sections */
         .form-section {
             margin-bottom: 32px;
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
         }
 
         .section-title {
@@ -350,6 +397,11 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 12px;
+            }
         }
     </style>
 </head>
@@ -371,14 +423,27 @@
     <main class="main-content">
         <div class="container">
             <div class="details-card">
-                <a href="/internship-type" class="back-link">← Back to Selection</a>
-                
-                <h1 class="details-title">Off Campus Internship Details</h1>
+                <h1 class="details-title">Internship Details</h1>
                 <p class="details-subtitle">Please provide your internship details below:</p>
                 
+                <!-- Internship Type Selection -->
+                <div class="type-selection">
+                    <h3 class="type-title">Select Internship Type</h3>
+                    <div class="radio-group">
+                        <div class="radio-option" id="offcampus-option">
+                            <input type="radio" id="offcampus" name="internshipType" value="offcampus" checked>
+                            <label for="offcampus">🏢 Off Campus Internship</label>
+                        </div>
+                        <div class="radio-option" id="oncampus-option">
+                            <input type="radio" id="oncampus" name="internshipType" value="oncampus">
+                            <label for="oncampus">🎓 On Campus Internship</label>
+                        </div>
+                    </div>
+                </div>
+                
                 <form id="internshipDetailsForm" enctype="multipart/form-data">
-                    <!-- Student Details -->
-                    <div class="form-section">
+                    <!-- Student Details (Common for both types) -->
+                    <div class="form-section active">
                         <h3 class="section-title">Student Details</h3>
                         <div class="form-grid">
                             <div class="form-group">
@@ -407,27 +472,18 @@
                                 <label class="form-label" for="studentEmail">Email ID <span class="required">*</span></label>
                                 <input type="email" id="studentEmail" name="studentEmail" class="form-input" required>
                             </div>
-                            <div class="form-group full-width">
-                                <label class="form-label" for="offerLetter">Offer Letter <span class="required">*</span></label>
-                                <div class="file-upload-container">
-                                    <label for="offerLetter" class="file-upload-label" id="fileUploadLabel">
-                                        📄 Click to upload PDF offer letter (Max 10MB)
-                                    </label>
-                                    <input type="file" id="offerLetter" name="offerLetter" class="file-upload-input" 
-                                           accept=".pdf" required>
-                                    <div class="file-info" id="fileInfo"></div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Company Information -->
-                    <div class="form-section">
-                        <h3 class="section-title">Company Information</h3>
+                    <!-- Off Campus Specific Fields -->
+                    <div id="offcampus-fields" class="form-section active">
+                        <h3 class="section-title">Off Campus Details</h3>
+                        
+                        <!-- Company Information -->
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label" for="companyName">Company Name <span class="required">*</span></label>
-                                <input type="text" id="companyName" name="companyName" class="form-input" required>
+                                <input type="text" id="companyName" name="companyName" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="companyType">Company Type</label>
@@ -445,28 +501,28 @@
                                 <label class="form-label" for="companyAddress">Company Address</label>
                                 <textarea id="companyAddress" name="companyAddress" class="form-textarea" rows="3"></textarea>
                             </div>
+                            <div class="form-group full-width">
+                                <label class="form-label" for="offerLetter">Offer Letter <span class="required">*</span></label>
+                                <div class="file-upload-container">
+                                    <label for="offerLetter" class="file-upload-label" id="fileUploadLabel">
+                                        📄 Click to upload PDF offer letter (Max 10MB)
+                                    </label>
+                                    <input type="file" id="offerLetter" name="offerLetter" class="file-upload-input" accept=".pdf">
+                                    <div class="file-info" id="fileInfo"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Internship Details -->
-                    <div class="form-section">
-                        <h3 class="section-title">Internship Details</h3>
+                        <!-- Job Details -->
+                        <h3 class="section-title" style="margin-top: 24px;">Job Details</h3>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label" for="jobTitle">Job Title/Position <span class="required">*</span></label>
-                                <input type="text" id="jobTitle" name="jobTitle" class="form-input" required>
+                                <input type="text" id="jobTitle" name="jobTitle" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="jobDepartment">Department/Team</label>
                                 <input type="text" id="jobDepartment" name="jobDepartment" class="form-input">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="startDate">Start Date <span class="required">*</span></label>
-                                <input type="date" id="startDate" name="startDate" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="endDate">End Date <span class="required">*</span></label>
-                                <input type="date" id="endDate" name="endDate" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="workMode">Work Mode</label>
@@ -479,8 +535,15 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="stipend">Monthly Stipend (₹)</label>
-                                <input type="number" id="stipend" name="stipend" class="form-input" min="0" 
-                                       placeholder="Enter amount or 0 for unpaid">
+                                <input type="number" id="stipend" name="stipend" class="form-input" min="0" placeholder="Enter amount or 0 for unpaid">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="startDate">Start Date <span class="required">*</span></label>
+                                <input type="date" id="startDate" name="startDate" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="endDate">End Date <span class="required">*</span></label>
+                                <input type="date" id="endDate" name="endDate" class="form-input">
                             </div>
                             <div class="form-group full-width">
                                 <label class="form-label" for="jobDescription">Job Description/Responsibilities</label>
@@ -488,15 +551,13 @@
                                          placeholder="Describe your main responsibilities and tasks..."></textarea>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Supervisor Information -->
-                    <div class="form-section">
-                        <h3 class="section-title">Supervisor Information</h3>
+                        <!-- Supervisor Information -->
+                        <h3 class="section-title" style="margin-top: 24px;">Supervisor Information</h3>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label" for="supervisorName">Supervisor Name <span class="required">*</span></label>
-                                <input type="text" id="supervisorName" name="supervisorName" class="form-input" required>
+                                <input type="text" id="supervisorName" name="supervisorName" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="supervisorDesignation">Designation</label>
@@ -504,18 +565,113 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="supervisorEmail">Email <span class="required">*</span></label>
-                                <input type="email" id="supervisorEmail" name="supervisorEmail" class="form-input" required>
+                                <input type="email" id="supervisorEmail" name="supervisorEmail" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="supervisorPhone">Phone Number</label>
-                                <input type="tel" id="supervisorPhone" name="supervisorPhone" class="form-input" 
-                                       placeholder="+91XXXXXXXXXX">
+                                <input type="tel" id="supervisorPhone" name="supervisorPhone" class="form-input" placeholder="+91XXXXXXXXXX">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Additional Information -->
-                    <div class="form-section">
+                    <!-- On Campus Specific Fields -->
+                    <div id="oncampus-fields" class="form-section">
+                        <h3 class="section-title">On Campus Details</h3>
+                        
+                        <!-- Department/Lab Information -->
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="universityDepartment">University Department <span class="required">*</span></label>
+                                <select id="universityDepartment" name="universityDepartment" class="form-select">
+                                    <option value="">Select Department</option>
+                                    <option value="computer-science">Computer Science & Engineering</option>
+                                    <option value="information-technology">Information Technology</option>
+                                    <option value="electronics">Electronics & Communication</option>
+                                    <option value="mechanical">Mechanical Engineering</option>
+                                    <option value="civil">Civil Engineering</option>
+                                    <option value="research-development">Research & Development</option>
+                                    <option value="library">Library Services</option>
+                                    <option value="administration">Administration</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="projectTitle">Project/Research Title <span class="required">*</span></label>
+                                <input type="text" id="projectTitle" name="projectTitle" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="labName">Lab/Centre Name</label>
+                                <input type="text" id="labName" name="labName" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="internshipDuration">Duration (Weeks) <span class="required">*</span></label>
+                                <select id="internshipDuration" name="internshipDuration" class="form-select">
+                                    <option value="">Select Duration</option>
+                                    <option value="4">4 Weeks</option>
+                                    <option value="6">6 Weeks</option>
+                                    <option value="8">8 Weeks</option>
+                                    <option value="12">12 Weeks</option>
+                                    <option value="16">16 Weeks</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="onCampusStartDate">Start Date <span class="required">*</span></label>
+                                <input type="date" id="onCampusStartDate" name="startDate" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="onCampusEndDate">End Date <span class="required">*</span></label>
+                                <input type="date" id="onCampusEndDate" name="endDate" class="form-input">
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label" for="projectDescription">Project Description</label>
+                                <textarea id="projectDescription" name="projectDescription" class="form-textarea" rows="4" 
+                                         placeholder="Describe the project objectives and your role..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Faculty Mentor Information -->
+                        <h3 class="section-title" style="margin-top: 24px;">Faculty Mentor Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="mentorName">Mentor Name <span class="required">*</span></label>
+                                <input type="text" id="mentorName" name="mentorName" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="mentorDesignation">Designation <span class="required">*</span></label>
+                                <select id="mentorDesignation" name="mentorDesignation" class="form-select">
+                                    <option value="">Select Designation</option>
+                                    <option value="professor">Professor</option>
+                                    <option value="associate-professor">Associate Professor</option>
+                                    <option value="assistant-professor">Assistant Professor</option>
+                                    <option value="research-scientist">Research Scientist</option>
+                                    <option value="lab-coordinator">Lab Coordinator</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="mentorEmail">Email <span class="required">*</span></label>
+                                <input type="email" id="mentorEmail" name="mentorEmail" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="mentorPhone">Phone Number</label>
+                                <input type="tel" id="mentorPhone" name="mentorPhone" class="form-input" placeholder="+91XXXXXXXXXX">
+                            </div>
+                        </div>
+
+                        <!-- Expected Outcomes -->
+                        <h3 class="section-title" style="margin-top: 24px;">Expected Outcomes</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="form-label" for="expectedDeliverables">Expected Deliverables</label>
+                                <textarea id="expectedDeliverables" name="expectedDeliverables" class="form-textarea" rows="3" 
+                                         placeholder="List the expected outputs, reports, or deliverables..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information (Common for both types) -->
+                    <div class="form-section active">
                         <h3 class="section-title">Additional Information</h3>
                         <div class="form-grid">
                             <div class="form-group full-width">
@@ -545,7 +701,9 @@
     </footer>
 
     <script>
-        // Check authentication on page load
+        let currentType = 'offcampus';
+
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             const registerNumber = sessionStorage.getItem('registerNumber');
             if (!registerNumber) {
@@ -556,15 +714,85 @@
             // Pre-fill register number
             document.getElementById('registerNumber').value = registerNumber;
 
-            // Check if internship type was selected
-            const internshipType = sessionStorage.getItem('internshipType');
-            if (!internshipType || internshipType !== 'offcampus') {
-                window.location.href = '/internship-type';
-                return;
-            }
-
+            // Setup internship type switching
+            setupTypeSelection();
             setupFileUpload();
+            
+            // Show default fields
+            showFields('offcampus');
         });
+
+        // Setup type selection functionality
+        function setupTypeSelection() {
+            const radioOptions = document.querySelectorAll('.radio-option');
+            const radioInputs = document.querySelectorAll('input[name="internshipType"]');
+
+            radioOptions.forEach((option, index) => {
+                option.addEventListener('click', () => {
+                    // Update radio selection
+                    radioInputs[index].checked = true;
+                    
+                    // Update visual selection
+                    radioOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    
+                    // Show appropriate fields
+                    const value = radioInputs[index].value;
+                    showFields(value);
+                    currentType = value;
+                });
+            });
+
+            // Set initial selection
+            document.getElementById('offcampus-option').classList.add('selected');
+        }
+
+        // Show/hide fields based on internship type
+        function showFields(type) {
+            const offcampusFields = document.getElementById('offcampus-fields');
+            const oncampusFields = document.getElementById('oncampus-fields');
+
+            if (type === 'offcampus') {
+                offcampusFields.classList.add('active');
+                oncampusFields.classList.remove('active');
+                
+                // Set required fields for off-campus
+                setRequiredFields('offcampus');
+            } else {
+                oncampusFields.classList.add('active');
+                offcampusFields.classList.remove('active');
+                
+                // Set required fields for on-campus
+                setRequiredFields('oncampus');
+            }
+        }
+
+        // Set required fields based on type
+        function setRequiredFields(type) {
+            // Clear all type-specific required attributes
+            document.querySelectorAll('.form-input, .form-select').forEach(field => {
+                if (!field.closest('.form-section').classList.contains('active') || 
+                    field.closest('#offcampus-fields, #oncampus-fields')) {
+                    field.removeAttribute('required');
+                }
+            });
+
+            if (type === 'offcampus') {
+                // Set off-campus required fields
+                const requiredFields = ['companyName', 'jobTitle', 'startDate', 'endDate', 'supervisorName', 'supervisorEmail'];
+                requiredFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) field.setAttribute('required', '');
+                });
+            } else {
+                // Set on-campus required fields
+                const requiredFields = ['universityDepartment', 'projectTitle', 'internshipDuration', 'onCampusStartDate', 'onCampusEndDate', 'mentorName', 'mentorDesignation', 'mentorEmail'];
+                requiredFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) field.setAttribute('required', '');
+                });
+            }
+        }
 
         // File upload handling
         function setupFileUpload() {
@@ -572,39 +800,41 @@
             const fileLabel = document.getElementById('fileUploadLabel');
             const fileInfo = document.getElementById('fileInfo');
 
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                
-                if (file) {
-                    // Validate file type
-                    if (file.type !== 'application/pdf') {
-                        alert('Please select a PDF file only.');
-                        fileInput.value = '';
-                        return;
-                    }
-
-                    // Validate file size (10MB limit)
-                    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-                    if (file.size > maxSize) {
-                        alert('File size must be less than 10MB.');
-                        fileInput.value = '';
-                        return;
-                    }
-
-                    // Update UI
-                    fileLabel.textContent = `✅ ${file.name} selected`;
-                    fileLabel.classList.add('has-file');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
                     
-                    fileInfo.innerHTML = `
-                        <strong>Selected:</strong> ${file.name}<br>
-                        <strong>Size:</strong> ${formatFileSize(file.size)}
-                        <button type="button" class="file-remove" onclick="removeFile()">Remove</button>
-                    `;
-                    fileInfo.classList.add('show');
-                } else {
-                    resetFileUpload();
-                }
-            });
+                    if (file) {
+                        // Validate file type
+                        if (file.type !== 'application/pdf') {
+                            alert('Please select a PDF file only.');
+                            fileInput.value = '';
+                            return;
+                        }
+
+                        // Validate file size (10MB limit)
+                        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                        if (file.size > maxSize) {
+                            alert('File size must be less than 10MB.');
+                            fileInput.value = '';
+                            return;
+                        }
+
+                        // Update UI
+                        fileLabel.textContent = `✅ ${file.name} selected`;
+                        fileLabel.classList.add('has-file');
+                        
+                        fileInfo.innerHTML = `
+                            <strong>Selected:</strong> ${file.name}<br>
+                            <strong>Size:</strong> ${formatFileSize(file.size)}
+                            <button type="button" class="file-remove" onclick="removeFile()">Remove</button>
+                        `;
+                        fileInfo.classList.add('show');
+                    } else {
+                        resetFileUpload();
+                    }
+                });
+            }
         }
 
         function removeFile() {
@@ -642,27 +872,40 @@
                 return;
             }
 
-            // Validate required fields
-            const requiredFields = ['studentName', 'department', 'studentEmail', 'offerLetter', 
-                                  'companyName', 'jobTitle', 'startDate', 'endDate', 
-                                  'supervisorName', 'supervisorEmail'];
+            // Get selected internship type
+            const selectedType = document.querySelector('input[name="internshipType"]:checked').value;
+
+            // Validate required fields based on type
+            const requiredFields = getRequiredFieldsByType(selectedType);
             
             for (let field of requiredFields) {
                 const input = document.getElementById(field);
-                if (!input.value.trim()) {
+                if (input && !input.value.trim()) {
                     alert(`Please fill in the ${input.previousElementSibling.textContent.replace(' *', '')} field.`);
                     input.focus();
                     return;
                 }
             }
 
+            // For off-campus, check if file is uploaded
+            if (selectedType === 'offcampus') {
+                const fileInput = document.getElementById('offerLetter');
+                if (!fileInput.files[0]) {
+                    alert('Please upload your offer letter PDF.');
+                    return;
+                }
+            }
+
             // Validate dates
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
+            const startDateField = selectedType === 'offcampus' ? 'startDate' : 'onCampusStartDate';
+            const endDateField = selectedType === 'offcampus' ? 'endDate' : 'onCampusEndDate';
+            
+            const startDate = new Date(document.getElementById(startDateField).value);
+            const endDate = new Date(document.getElementById(endDateField).value);
             
             if (endDate <= startDate) {
                 alert('End date must be after start date.');
-                document.getElementById('endDate').focus();
+                document.getElementById(endDateField).focus();
                 return;
             }
 
@@ -670,24 +913,21 @@
             submitButton.disabled = true;
             submitButton.textContent = 'SUBMITTING...';
 
-            // Prepare form data for file upload
+            // Prepare form data
             const formData = new FormData(this);
             formData.append('registerNumber', registerNumber);
-            formData.append('internshipType', 'offcampus');
+            formData.append('internshipType', selectedType);
 
             try {
                 const response = await fetch('/submit-internship-details', {
                     method: 'POST',
-                    body: formData // Send as FormData for file upload
+                    body: formData
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
                     alert('Internship details submitted successfully!');
-                    // Clear the internship type from session
-                    sessionStorage.removeItem('internshipType');
-                    // Redirect to dashboard
                     window.location.href = data.redirectUrl;
                 } else {
                     alert('Error: ' + data.message);
@@ -696,11 +936,21 @@
                 alert('Connection error. Please try again.');
                 console.error('Error:', error);
             } finally {
-                // Re-enable submit button
                 submitButton.disabled = false;
                 submitButton.textContent = 'SUBMIT INTERNSHIP DETAILS';
             }
         });
+
+        // Get required fields based on internship type
+        function getRequiredFieldsByType(type) {
+            const commonFields = ['studentName', 'department', 'studentEmail'];
+            
+            if (type === 'offcampus') {
+                return [...commonFields, 'companyName', 'jobTitle', 'startDate', 'endDate', 'supervisorName', 'supervisorEmail'];
+            } else {
+                return [...commonFields, 'universityDepartment', 'projectTitle', 'internshipDuration', 'onCampusStartDate', 'onCampusEndDate', 'mentorName', 'mentorDesignation', 'mentorEmail'];
+            }
+        }
     </script>
 </body>
 </html>
