@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - Christ University</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1E3A8A;
+            --secondary: #F1F5F9;
+            --accent: #60A5FA;
+            --success: #10B981;
+            --warning: #FBBF24;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --background: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                linear-gradient(rgba(30, 58, 138, 0.7), rgba(37, 99, 235, 0.7)),
+                url('background.jpg') center/cover no-repeat fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            animation: fadeInPage 1s ease-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--background);
+            padding: 20px 32px;
+            border-bottom: 1px solid #E5E7EB;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(-100%);
+            animation: slideDownHeader 0.8s ease-out 0.3s forwards;
+        }
+
+        @keyframes slideDownHeader {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo-link {
+            display: block;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: absolute;
+            left: 0;
+            z-index: 10;
+            transform: scale(0);
+            animation: scaleInLogo 0.6s ease-out 0.8s forwards;
+        }
+
+        @keyframes scaleInLogo {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .logo-link:hover {
+            transform: scale(1.05) rotate(5deg);
+            filter: brightness(1.1);
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .university-info {
+            color: var(--primary);
+            text-align: center;
+            width: 100%;
+            padding: 0 100px;
+            opacity: 0;
+            animation: fadeInText 0.8s ease-out 1s forwards;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .university-name {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .portal-subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+            font-weight: 500;
+            letter-spacing: 0.25px;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .register-card {
+            background: var(--background);
+            border-radius: 16px;
+            padding: 40px 32px;
+            width: 100%;
+            box-shadow: 
+                0px 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0px 10px 10px -5px rgba(0, 0, 0, 0.04);
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            animation: cardSlideUp 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) 0.5s forwards;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes cardSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .register-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 24px;
+            display: block;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.2s forwards;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-5px);
+        }
+
+        @keyframes fadeInStagger {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.4s forwards;
+        }
+
+        .register-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.5;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.6s forwards;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.8s forwards;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .required {
+            color: #EF4444;
+        }
+
+        .form-input, .form-select {
+            padding: 14px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            background: var(--background);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .password-strength {
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .password-strength.show {
+            opacity: 1;
+        }
+
+        .strength-weak {
+            color: #EF4444;
+        }
+
+        .strength-medium {
+            color: var(--warning);
+        }
+
+        .strength-strong {
+            color: var(--success);
+        }
+
+        .register-button {
+            background: linear-gradient(135deg, var(--primary), #1E40AF);
+            color: var(--background);
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .register-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .register-button:hover::before {
+            left: 100%;
+        }
+
+        .register-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        }
+
+        .register-button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .register-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 2.2s forwards;
+        }
+
+        .login-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .message.success {
+            background: #ECFDF5;
+            color: var(--success);
+            border: 1px solid #D1FAE5;
+        }
+
+        .message.error {
+            background: #FEF2F2;
+            color: #DC2626;
+            border: 1px solid #FECACA;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Footer Info */
+        .footer-info {
+            background: var(--background);
+            padding: 16px 32px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid #E5E7EB;
+            box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.05);
+            transform: translateY(100%);
+            animation: slideUpFooter 0.8s ease-out 0.7s forwards;
+        }
+
+        @keyframes slideUpFooter {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .footer-info {
+                padding: 12px 20px;
+                font-size: 11px;
+            }
+
+            .logo {
+                height: 50px;
+            }
+
+            .university-info {
+                padding: 0 80px;
+            }
+
+            .university-name {
+                font-size: 24px;
+            }
+
+            .portal-subtitle {
+                font-size: 14px;
+            }
+
+            .register-card {
+                padding: 32px 24px;
+                margin: 0 16px;
+                border-radius: 12px;
+            }
+            
+            .register-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .footer-info {
+                padding: 12px 16px;
+                font-size: 10px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                position: static;
+            }
+
+            .logo-link {
+                position: static;
+            }
+
+            .university-info {
+                padding: 0;
+                margin: 0;
+            }
+
+            .logo {
+                height: 45px;
+            }
+
+            .university-name {
+                font-size: 22px;
+            }
+
+            .portal-subtitle {
+                font-size: 13px;
+            }
+
+            .register-card {
+                padding: 32px 24px;
+            }
+            
+            .register-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo-link">
+                <img src="logo.png" alt="Christ University Logo" class="logo">
+            </a>
+            <div class="university-info">
+                <div class="university-name">Christ University</div>
+                <div class="portal-subtitle">Internship Management Portal</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="register-card">
+                <a href="/student" class="back-link">← Back to Login</a>
+                <h1 class="register-title">CREATE STUDENT ACCOUNT</h1>
+                <p class="register-subtitle">Fill in the details below to create your account:</p>
+                
+                <form id="registerForm" class="register-form">
+                    <div class="form-group">
+                        <label for="registerNumber" class="form-label">REGISTER NUMBER <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="registerNumber" 
+                            name="registerNumber" 
+                            class="form-input" 
+                            placeholder="Enter your register number"
+                            required
+                            readonly
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name" class="form-label">FULL NAME <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            class="form-input" 
+                            placeholder="Enter your full name"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">EMAIL ADDRESS <span class="required">*</span></label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="Enter your email address"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="department" class="form-label">DEPARTMENT <span class="required">*</span></label>
+                        <select id="department" name="department" class="form-select" required>
+                            <option value="">Select Department</option>
+                            <option value="computer-science">Computer Science Engineering</option>
+                            <option value="information-technology">Information Technology</option>
+                            <option value="electronics">Electronics & Communication</option>
+                            <option value="mechanical">Mechanical Engineering</option>
+                            <option value="civil">Civil Engineering</option>
+                            <option value="business">Business Administration</option>
+                            <option value="commerce">Commerce</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="form-label">PHONE NUMBER</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            class="form-input" 
+                            placeholder="+91XXXXXXXXXX"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">PASSWORD <span class="required">*</span></label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Enter your password"
+                            required
+                            minlength="6"
+                        >
+                        <div class="password-strength" id="passwordStrength"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">CONFIRM PASSWORD <span class="required">*</span></label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            class="form-input" 
+                            placeholder="Confirm your password"
+                            required
+                            minlength="6"
+                        >
+                    </div>
+                    
+                    <button type="submit" class="register-button" id="registerButton">
+                        CREATE ACCOUNT
+                    </button>
+                    
+                    <a href="/student" class="login-link">Already have an account? Login here</a>
+                </form>
+                
+                <div id="message" class="message hidden"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+        <div>© 2025 Christ University Internship Portal | Secure Access | Academic Excellence</div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pre-fill register number if coming from login page
+            const tempRegisterNumber = sessionStorage.getItem('tempRegisterNumber');
+            if (tempRegisterNumber) {
+                document.getElementById('registerNumber').value = tempRegisterNumber;
+                sessionStorage.removeItem('tempRegisterNumber');
+            }
+
+            const registerForm = document.getElementById('registerForm');
+            const messageDiv = document.getElementById('message');
+            const registerButton = document.getElementById('registerButton');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordStrengthDiv = document.getElementById('passwordStrength');
+
+            function showMessage(text, type) {
+                messageDiv.textContent = text;
+                messageDiv.className = `message ${type}`;
+                messageDiv.classList.remove('hidden');
+            }
+
+            function hideMessage() {
+                messageDiv.classList.add('hidden');
+            }
+
+            // Password strength checker
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                let message = '';
+                
+                if (password.length >= 6) strength++;
+                if (password.match(/[a-z]/)) strength++;
+                if (password.match(/[A-Z]/)) strength++;
+                if (password.match(/[0-9]/)) strength++;
+                if (password.match(/[^a-zA-Z0-9]/)) strength++;
+                
+                switch (strength) {
+                    case 0:
+                    case 1:
+                        message = 'Weak password';
+                        passwordStrengthDiv.className = 'password-strength show strength-weak';
+                        break;
+                    case 2:
+                    case 3:
+                        message = 'Medium strength password';
+                        passwordStrengthDiv.className = 'password-strength show strength-medium';
+                        break;
+                    case 4:
+                    case 5:
+                        message = 'Strong password';
+                        passwordStrengthDiv.className = 'password-strength show strength-strong';
+                        break;
+                }
+                
+                passwordStrengthDiv.textContent = message;
+            }
+
+            // Password strength indicator
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                if (password.length > 0) {
+                    checkPasswordStrength(password);
+                } else {
+                    passwordStrengthDiv.classList.remove('show');
+                }
+            });
+
+            // Password confirmation checker
+            confirmPasswordInput.addEventListener('input', function() {
+                const password = passwordInput.value;
+                const confirmPassword = this.value;
+                
+                if (confirmPassword.length > 0) {
+                    if (password !== confirmPassword) {
+                        this.style.borderColor = '#EF4444';
+                    } else {
+                        this.style.borderColor = '#10B981';
+                    }
+                } else {
+                    this.style.borderColor = '#E5E7EB';
+                }
+            });
+
+            // Form submission
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(registerForm);
+                const data = {
+                    registerNumber: formData.get('registerNumber'),
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    department: formData.get('department'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password'),
+                    confirmPassword: formData.get('confirmPassword')
+                };
+
+                // Client-side validation
+                if (data.password !== data.confirmPassword) {
+                    showMessage('Passwords do not match', 'error');
+                    return;
+                }
+
+                if (data.password.length < 6) {
+                    showMessage('Password must be at least 6 characters long', 'error');
+                    return;
+                }
+
+                registerButton.textContent = 'CREATING ACCOUNT...';
+                registerButton.disabled = true;
+                hideMessage();
+
+                try {
+                    const response = await fetch('/student-register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showMessage(result.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = result.redirectUrl;
+                        }, 2000);
+                    } else {
+                        showMessage(result.message, 'error');
+                    }
+                } catch (error) {
+                    showMessage('Connection error. Please try again.', 'error');
+                } finally {
+                    registerButton.textContent = 'CREATE ACCOUNT';
+                    registerButton.disabled = false;
+                }
+            });
+
+            // Hide message when typing
+            const inputs = registerForm.querySelectorAll('.form-input, .form-select');
+            inputs.forEach(input => {
+                input.addEventListener('input', hideMessage);
+            });
+        });
+    </script>
+</body>
+</html>

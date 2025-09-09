@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christ University Internship Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1E3A8A;
+            --secondary: #F1F5F9;
+            --accent: #60A5FA;
+            --success: #10B981;
+            --warning: #FBBF24;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --background: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                linear-gradient(rgba(30, 58, 138, 0.7), rgba(37, 99, 235, 0.7)),
+                url('background.jpg') center/cover no-repeat fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            animation: fadeInPage 1s ease-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--background);
+            padding: 20px 32px;
+            border-bottom: 1px solid #E5E7EB;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(-100%);
+            animation: slideDownHeader 0.8s ease-out 0.3s forwards;
+        }
+
+        @keyframes slideDownHeader {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo-link {
+            display: block;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: absolute;
+            left: 0;
+            z-index: 10;
+            transform: scale(0);
+            animation: scaleInLogo 0.6s ease-out 0.8s forwards;
+        }
+
+        @keyframes scaleInLogo {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .logo-link:hover {
+            transform: scale(1.05) rotate(5deg);
+            filter: brightness(1.1);
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .university-info {
+            color: var(--primary);
+            text-align: center;
+            width: 100%;
+            padding: 0 100px;
+            opacity: 0;
+            animation: fadeInText 0.8s ease-out 1s forwards;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .university-name {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .portal-subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+            font-weight: 500;
+            letter-spacing: 0.25px;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-card {
+            background: var(--background);
+            border-radius: 16px;
+            padding: 32px 40px;
+            width: 100%;
+            box-shadow: 
+                0px 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0px 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            animation: cardSlideUp 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) 0.5s forwards;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes cardSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .main-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 
+                0px 35px 60px -12px rgba(0, 0, 0, 0.3),
+                0px 15px 15px -5px rgba(0, 0, 0, 0.06);
+        }
+
+        .welcome-section {
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.2s forwards;
+        }
+
+        @keyframes fadeInStagger {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            transition: color 0.3s ease;
+        }
+
+        /* Login Options */
+        .login-section {
+            border-top: 1px solid #E5E7EB;
+            padding-top: 20px;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.8s forwards;
+        }
+
+        .login-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .login-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .login-option {
+            background: linear-gradient(135deg, var(--primary), #1E40AF);
+            color: var(--background);
+            border: none;
+            border-radius: 12px;
+            padding: 18px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .login-option:nth-child(1) {
+            animation: slideUpButton 0.6s ease-out 2s forwards;
+        }
+
+        .login-option:nth-child(2) {
+            animation: slideUpButton 0.6s ease-out 2.2s forwards;
+        }
+
+        @keyframes slideUpButton {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .login-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .login-option:hover::before {
+            left: 100%;
+        }
+
+        .login-option:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        }
+
+        .login-option:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .login-option.faculty {
+            background: linear-gradient(135deg, var(--accent), #3B82F6);
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
+        }
+
+        .login-option.faculty:hover {
+            box-shadow: 0 8px 25px rgba(96, 165, 250, 0.4);
+        }
+
+        /* Footer Info */
+        .footer-info {
+            background: var(--background);
+            padding: 16px 32px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid #E5E7EB;
+            box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.05);
+            transform: translateY(100%);
+            animation: slideUpFooter 0.8s ease-out 0.7s forwards;
+        }
+
+        @keyframes slideUpFooter {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Grid - Compact */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 16px 0;
+            padding: 16px 0;
+            border-top: 1px solid #F3F4F6;
+            border-bottom: 1px solid #F3F4F6;
+            opacity: 0;
+            animation: fadeInStagger 0.6s ease-out 1.5s forwards;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 8px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--secondary), #E2E8F0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 2px 10px rgba(30, 58, 138, 0.1);
+        }
+
+        .feature-item:hover .feature-icon {
+            transform: scale(1.1) rotate(360deg);
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.2);
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+        }
+
+        .feature-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .feature-item:hover .feature-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Floating Animation */
+        .main-card {
+            animation: 
+                cardSlideUp 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) 0.5s forwards,
+                float 6s ease-in-out 2.5s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .footer-info {
+                padding: 12px 20px;
+                font-size: 11px;
+            }
+
+            .logo {
+                height: 50px;
+            }
+
+            .university-info {
+                padding: 0 80px;
+            }
+
+            .university-name {
+                font-size: 24px;
+            }
+
+            .portal-subtitle {
+                font-size: 14px;
+            }
+
+            .main-card {
+                padding: 28px 32px;
+                margin: 0 16px;
+                border-radius: 12px;
+            }
+
+            .main-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .footer-info {
+                padding: 12px 16px;
+                font-size: 10px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                position: static;
+            }
+
+            .logo-link {
+                position: static;
+            }
+
+            .university-info {
+                padding: 0;
+                margin: 0;
+            }
+
+            .logo {
+                height: 45px;
+            }
+
+            .university-name {
+                font-size: 22px;
+            }
+
+            .portal-subtitle {
+                font-size: 13px;
+            }
+
+            .main-card {
+                padding: 24px 20px;
+            }
+            
+            .main-title {
+                font-size: 22px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin: 12px 0;
+                padding: 12px 0;
+            }
+
+            .feature-item {
+                padding: 6px;
+            }
+
+            .feature-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .feature-text {
+                font-size: 11px;
+            }
+
+            .login-option {
+                padding: 16px 20px;
+                border-radius: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo-link">
+                <img src="logo.png" alt="Christ University Logo" class="logo">
+            </a>
+            <div class="university-info">
+                <div class="university-name">Christ University</div>
+                <div class="portal-subtitle">Internship Management Portal</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="main-card">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h1 class="main-title">Internship Portal</h1>
+                    <p class="subtitle">Connect Students with Opportunities</p>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">📚</div>
+                        <div class="feature-text">Course Integration</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-text">Progress Tracking</div>
+                    </div>
+                </div>
+
+                <!-- Login Section -->
+                <div class="login-section">
+                    <h2 class="login-section-title">Choose Your Portal</h2>
+                    
+                    <div class="login-options">
+                        <a href="/student" class="login-option student">
+                            Student Portal
+                        </a>
+                        <a href="/faculty" class="login-option faculty">
+                            Faculty Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+        <div>© 2025 Christ University Internship Portal | Secure Access | Academic Excellence</div>
+    </footer>
+</body>
+</html>
