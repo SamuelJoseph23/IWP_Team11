@@ -10,20 +10,25 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Your Railway MongoDB connection string
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:ZkjlIleshkrqBLcjldnzVcsndxEHRtnJ@mongodb.railway.internal:27017';
+// Your MongoDB Atlas connection string with database name
+const MONGO_URI = process.env.MONGO_URI || 
+  'mongodb+srv://samueljoseph:samuel@iwpcluster.f754koy.mongodb.net/IWP_Team11?retryWrites=true&w=majority&appName=IWPCluster';
 
-// MongoDB Connection
+// MongoDB Connection with Atlas optimization
 async function connectDB() {
   try {
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 30000,
     });
-    console.log('✅ MongoDB Connected Successfully');
-    console.log('🔗 Connected to Railway MongoDB');
+    console.log('✅ MongoDB Atlas Connected Successfully');
+    console.log('🗄️  Database: IWP_Team11');
+    console.log('☁️  Provider: MongoDB Atlas');
   } catch (error) {
-    console.error('❌ MongoDB Connection Error:', error);
+    console.error('❌ MongoDB Atlas Connection Error:', error);
     process.exit(1);
   }
 }
@@ -124,7 +129,7 @@ const InternshipReport = mongoose.model('InternshipReport', internshipReportSche
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Session configuration with MongoDB store
+// Session configuration with MongoDB Atlas store
 app.use(session({
   secret: process.env.SESSION_SECRET || 'christ-university-internship-portal-secret',
   resave: false,
@@ -484,17 +489,18 @@ async function startServer() {
     }
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`📊 Database: Railway MongoDB`);
+      console.log(`🚀 Christ University Internship Portal`);
+      console.log(`🌐 Server running on port ${PORT}`);
+      console.log(`📊 Database: IWP_Team11 (MongoDB Atlas)`);
+      console.log(`🔒 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log('\n📄 Available endpoints:');
-      console.log('- Main: /');
-      console.log('- Student login: /student');
-      console.log('- Student registration: /student-register');
-      console.log('- Faculty login: /faculty');
-      console.log('- Internship details: /internship-details');
-      console.log('- Internship report: /internship-report');
-      console.log('- Student dashboard: /student-dashboard');
+      console.log('   - Main page: /');
+      console.log('   - Student login: /student');
+      console.log('   - Student registration: /student-register');
+      console.log('   - Faculty login: /faculty');
+      console.log('   - Internship details: /internship-details');
+      console.log('   - Internship report: /internship-report');
+      console.log('   - Student dashboard: /student-dashboard');
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
@@ -506,14 +512,14 @@ async function startServer() {
 process.on('SIGINT', async () => {
   console.log('\n🛑 Shutting down gracefully...');
   await mongoose.connection.close();
-  console.log('📤 MongoDB connection closed');
+  console.log('📤 MongoDB Atlas connection closed');
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
   console.log('\n🛑 Shutting down gracefully...');
   await mongoose.connection.close();
-  console.log('📤 MongoDB connection closed');
+  console.log('📤 MongoDB Atlas connection closed');
   process.exit(0);
 });
 
