@@ -26,6 +26,15 @@
       "department": "computer-science",
       "phone": "73377333333",
       "createdAt": "2025-09-09T14:38:46.091Z"
+    },
+    {
+      "registerNumber": "2362331",
+      "password": "samuel",
+      "name": "Haniel",
+      "email": "haniel@haniel.com",
+      "department": "civil",
+      "phone": "1234567890",
+      "createdAt": "2025-09-10T03:40:03.262Z"
     }
   ],
   "faculty": [
@@ -40,29 +49,29 @@
   ],
   "internshipDetails": {
     "2362637,2362637": {
-      "studentName": "Samuel Joseph",
-      "department": "business",
-      "studentEmail": "sam@btech.come",
+      "studentName": "samuel",
+      "department": "computer-science",
+      "studentEmail": "samuel@btech.com",
       "companyName": "samuel",
-      "companyType": "consulting",
-      "companyAddress": "samuel",
-      "jobTitle": "ceo",
-      "jobDepartment": "ceo",
-      "workMode": "remote",
-      "stipend": "3000",
+      "companyType": "",
+      "companyAddress": "",
+      "jobTitle": "head",
+      "jobDepartment": "",
+      "workMode": "",
+      "stipend": "",
       "startDate": [
-        "2025-09-24",
+        "2025-09-01",
         ""
       ],
       "endDate": [
-        "2025-10-02",
+        "2025-09-24",
         ""
       ],
-      "jobDescription": "nothing",
-      "supervisorName": "samuel",
-      "supervisorDesignation": "samuel",
-      "supervisorEmail": "samuel@btech.come",
-      "supervisorPhone": "1234567890",
+      "jobDescription": "",
+      "supervisorName": "head",
+      "supervisorDesignation": "",
+      "supervisorEmail": "head@gmail.com",
+      "supervisorPhone": "",
       "universityDepartment": "",
       "projectTitle": "",
       "labName": "",
@@ -73,12 +82,12 @@
       "mentorEmail": "",
       "mentorPhone": "",
       "expectedDeliverables": "",
-      "learningObjectives": "samuel",
-      "additionalNotes": "samuel\r\n",
+      "learningObjectives": "",
+      "additionalNotes": "",
       "internshipType": "offcampus",
-      "offerLetterPath": "C:\\Users\\jstep\\Documents\\GitHub\\IWP_Team11\\uploads\\2362637-1757432439127-736409005.pdf",
+      "offerLetterPath": "C:\\Users\\jstep\\Documents\\GitHub\\IWP_Team11\\uploads\\2362637-1757506155852-237550470.pdf",
       "offerLetterOriginalName": "2362637-SAMUEL JOSEPH_CompletiionCertificate.pdf",
-      "submittedAt": "2025-09-09T15:40:39.144Z"
+      "submittedAt": "2025-09-10T12:09:15.862Z"
     },
     "123456,123456": {
       "studentName": "samuel",
@@ -120,6 +129,48 @@
       "offerLetterPath": null,
       "offerLetterOriginalName": null,
       "submittedAt": "2025-09-09T15:26:19.032Z"
+    },
+    "2362331,2362331": {
+      "studentName": "haniel",
+      "department": "civil",
+      "studentEmail": "haniel@btech.com",
+      "companyName": "",
+      "companyType": "",
+      "companyAddress": "",
+      "jobTitle": "",
+      "jobDepartment": "",
+      "workMode": "",
+      "stipend": "",
+      "startDate": [
+        "",
+        "2025-09-10"
+      ],
+      "endDate": [
+        "",
+        "2025-09-26"
+      ],
+      "jobDescription": "",
+      "supervisorName": "",
+      "supervisorDesignation": "",
+      "supervisorEmail": "",
+      "supervisorPhone": "",
+      "universityDepartment": "mechanical",
+      "projectTitle": "scam call centre",
+      "labName": "",
+      "internshipDuration": "8",
+      "projectDescription": "",
+      "mentorName": "samuel",
+      "mentorDesignation": "associate-professor",
+      "mentorEmail": "samuel@samuel.com",
+      "mentorPhone": "",
+      "expectedDeliverables": "",
+      "learningObjectives": "",
+      "additionalNotes": "",
+      "internshipType": "oncampus",
+      "offerLetterPath": null,
+      "offerLetterOriginalName": null,
+      "submittedAt": "2025-09-10T03:41:06.455Z"
     }
-  }
+  },
+  "internshipReports": {}
 }

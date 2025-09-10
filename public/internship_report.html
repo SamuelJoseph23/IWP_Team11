@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Report Submission - Christ University</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1E3A8A;
+            --secondary: #F1F5F9;
+            --accent: #60A5FA;
+            --success: #10B981;
+            --warning: #FBBF24;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --background: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                linear-gradient(rgba(30, 58, 138, 0.7), rgba(37, 99, 235, 0.7)),
+                url('background.jpg') center/cover no-repeat fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--background);
+            padding: 20px 32px;
+            border-bottom: 1px solid #E5E7EB;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo-link {
+            display: block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 0;
+            z-index: 10;
+        }
+
+        .logo-link:hover {
+            transform: scale(1.05);
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .university-info {
+            color: var(--primary);
+            text-align: center;
+            width: 100%;
+            padding: 0 100px;
+        }
+
+        .university-name {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .portal-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 500;
+            letter-spacing: 0.25px;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .report-card {
+            background: var(--background);
+            border-radius: 16px;
+            padding: 40px 32px;
+            width: 100%;
+            box-shadow: 
+                0px 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0px 10px 10px -5px rgba(0, 0, 0, 0.04);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 24px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-3px);
+        }
+
+        .report-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .report-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        /* Form Styles */
+        .form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .left-section, .right-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .form-textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .form-range {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px dashed #CBD5E1;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--secondary), #E2E8F0);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input:hover {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #DBEAFE, var(--secondary));
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-top: 4px;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .notice {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, var(--primary), #1E40AF);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+            width: 100%;
+            margin-top: 24px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Footer */
+        .footer-info {
+            background: var(--background);
+            padding: 16px 32px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid #E5E7EB;
+            box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .university-info {
+                padding: 0;
+            }
+
+            .logo-link {
+                position: static;
+            }
+
+            .report-card {
+                padding: 32px 24px;
+                margin: 0 16px;
+            }
+
+            .report-title {
+                font-size: 24px;
+            }
+
+            .form {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo-link">
+                <img src="logo.png" alt="Christ University Logo" class="logo">
+            </a>
+            <div class="university-info">
+                <div class="university-name">Christ University</div>
+                <div class="portal-subtitle">Internship Management Portal</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="report-card">
+                <a href="/student-dashboard" class="back-link">← Back to Dashboard</a>
+                
+                <h1 class="report-title">Internship Report Submission</h1>
+                <p class="report-subtitle">Submit your completed internship report and feedback</p>
+                
+                <form class="form" id="reportForm" enctype="multipart/form-data">
+                    <div class="left-section">
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select name="department" class="form-select" required>
+                                <option value="">Choose Department</option>
+                                <option value="computer-science">Computer Science Engineering</option>
+                                <option value="information-technology">Information Technology</option>
+                                <option value="electronics">Electronics & Communication</option>
+                                <option value="mechanical">Mechanical Engineering</option>
+                                <option value="civil">Civil Engineering</option>
+                                <option value="business">Business Administration</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-input" placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Register Number</label>
+                            <input type="text" name="registerNumber" id="registerNumber" class="form-input" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Internship Type</label>
+                            <select name="internshipType" class="form-select" required>
+                                <option value="">Choose Type</option>
+                                <option value="industry">Industry Internship</option>
+                                <option value="research">Research Internship</option>
+                                <option value="oncampus">On-Campus Internship</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Internship Role</label>
+                            <input type="text" name="internshipRole" class="form-input" placeholder="e.g., Software Developer">
+                        </div>
+
+                        <div class="checkbox-container">
+                            <input type="checkbox" name="declaration" value="true" required>
+                            <span class="disclaimer">I hereby declare that the information provided is true and accurate to the best of my knowledge.</span>
+                        </div>
+                    </div>
+
+                    <div class="right-section">
+                        <div class="form-group">
+                            <label class="form-label">Internship Start Date</label>
+                            <input type="date" name="startDate" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Internship Mentor</label>
+                            <input type="text" name="mentor" class="form-input" placeholder="Enter mentor name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Internship Summary</label>
+                            <textarea name="summary" class="form-textarea" placeholder="Provide a summary of your internship experience (50-300 words)" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Rate Your Internship Experience (0-10)</label>
+                            <input type="range" name="rating" class="form-range" min="0" max="10" value="5">
+                            <div class="notice">Current rating: <span id="ratingValue">5</span>/10</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Internship Report</label>
+                            <input type="file" name="internshipReport" class="file-input" required>
+                            <div class="notice">Accepted: PDF, DOC, DOCX files (Max 10MB)</div>
+                        </div>
+
+                        <button class="submit-button" type="submit" id="submitButton">
+                            📄 Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+        <div>© 2025 Christ University Internship Portal | Secure Access | Academic Excellence</div>
+    </footer>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerNumber = sessionStorage.getItem('registerNumber');
+            if (!registerNumber) {
+                window.location.href = '/student';
+                return;
+            }
+
+            // Pre-fill register number
+            document.getElementById('registerNumber').value = registerNumber;
+            
+            // Setup rating slider
+            setupRatingSlider();
+        });
+
+        // Rating slider functionality
+        function setupRatingSlider() {
+            const ratingSlider = document.querySelector('input[name="rating"]');
+            const ratingValue = document.getElementById('ratingValue');
+            
+            ratingSlider.addEventListener('input', function() {
+                ratingValue.textContent = this.value;
+            });
+        }
+
+        // Form submission
+        document.getElementById('reportForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            const registerNumber = sessionStorage.getItem('registerNumber');
+            
+            if (!registerNumber) {
+                alert('Session expired. Please login again.');
+                window.location.href = '/student';
+                return;
+            }
+
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.textContent = '📤 Submitting...';
+
+            // Prepare form data
+            const formData = new FormData(this);
+            formData.append('registerNumber', registerNumber);
+
+            try {
+                const response = await fetch('/submit-internship-report', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('🎉 Internship report submitted successfully!');
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = '📄 Submit Report';
+            }
+        });
+    </script>
+</body>
+</html>
