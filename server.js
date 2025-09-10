@@ -10,14 +10,18 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Your Railway MongoDB connection string
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:ZkjlIleshkrqBLcjldnzVcsndxEHRtnJ@mongodb.railway.internal:27017';
+
 // MongoDB Connection
 async function connectDB() {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/internship-portal', {
+    await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     console.log('✅ MongoDB Connected Successfully');
+    console.log('🔗 Connected to Railway MongoDB');
   } catch (error) {
     console.error('❌ MongoDB Connection Error:', error);
     process.exit(1);
@@ -45,14 +49,14 @@ const facultySchema = new mongoose.Schema({
 
 const internshipDetailsSchema = new mongoose.Schema({
   registerNumber: { type: String, required: true },
-  internshipType: { type: String, required: true }, // 'offcampus' or 'oncampus'
+  internshipType: { type: String, required: true },
   
   // Student Details
   studentName: String,
   department: String,
   studentEmail: String,
   
-  // Off-campus specific fields
+  // Off-campus fields
   companyName: String,
   companyType: String,
   companyAddress: String,
@@ -65,7 +69,7 @@ const internshipDetailsSchema = new mongoose.Schema({
   supervisorEmail: String,
   supervisorPhone: String,
   
-  // On-campus specific fields
+  // On-campus fields
   universityDepartment: String,
   projectTitle: String,
   labName: String,
@@ -122,11 +126,11 @@ app.use(express.urlencoded({ extended: false }));
 
 // Session configuration with MongoDB store
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
+  secret: process.env.SESSION_SECRET || 'christ-university-internship-portal-secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/internship-portal',
+    mongoUrl: MONGO_URI,
     collectionName: 'sessions'
   }),
   cookie: {
@@ -147,7 +151,7 @@ app.use((req, res, next) => {
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configure multer for file uploads (Railway-compatible)
+// Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(__dirname, 'uploads');
@@ -203,6 +207,10 @@ app.get('/internship-report', (req, res) => {
 
 app.get('/student-dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'student_dashboard.html'));
+});
+
+app.get('/teacher-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'teacher_dashboard.html'));
 });
 
 // API Endpoints
@@ -478,7 +486,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`📊 Database: MongoDB Atlas`);
+      console.log(`📊 Database: Railway MongoDB`);
       console.log('\n📄 Available endpoints:');
       console.log('- Main: /');
       console.log('- Student login: /student');
