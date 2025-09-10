@@ -10,11 +10,11 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Your MongoDB Atlas connection string with database name
+// MongoDB Atlas connection with your credentials
 const MONGO_URI = process.env.MONGO_URI || 
   'mongodb+srv://samueljoseph:samuel@iwpcluster.f754koy.mongodb.net/IWP_Team11?retryWrites=true&w=majority&appName=IWPCluster';
 
-// MongoDB Connection with Atlas optimization
+// MongoDB Connection Function
 async function connectDB() {
   try {
     await mongoose.connect(MONGO_URI, {
@@ -156,6 +156,14 @@ app.use((req, res, next) => {
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Input sanitization function
+function sanitizeInput(input) {
+  if (Array.isArray(input)) {
+    return String(input[0]).trim();
+  }
+  return String(input || '').trim();
+}
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -166,8 +174,9 @@ const storage = multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
+    const registerNumber = sanitizeInput(req.body.registerNumber);
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const filename = req.body.registerNumber + '-' + uniqueSuffix + path.extname(file.originalname);
+    const filename = registerNumber + '-' + uniqueSuffix + path.extname(file.originalname);
     cb(null, filename);
   }
 });
@@ -176,7 +185,11 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: function (req, file, cb) {
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -223,7 +236,8 @@ app.get('/teacher-dashboard', (req, res) => {
 // Get student profile
 app.get('/api/student-profile/:registerNumber', async (req, res) => {
   try {
-    const student = await Student.findOne({ registerNumber: req.params.registerNumber }).select('-password');
+    const registerNumber = sanitizeInput(req.params.registerNumber);
+    const student = await Student.findOne({ registerNumber }).select('-password');
     if (!student) {
       return res.status(404).json({ success: false, message: 'Student not found' });
     }
@@ -237,7 +251,8 @@ app.get('/api/student-profile/:registerNumber', async (req, res) => {
 // Get internship details
 app.get('/api/internship-details/:registerNumber', async (req, res) => {
   try {
-    const details = await InternshipDetails.findOne({ registerNumber: req.params.registerNumber });
+    const registerNumber = sanitizeInput(req.params.registerNumber);
+    const details = await InternshipDetails.findOne({ registerNumber });
     res.json({
       success: true,
       hasDetails: !!details,
@@ -252,7 +267,8 @@ app.get('/api/internship-details/:registerNumber', async (req, res) => {
 // Get internship report
 app.get('/api/internship-report/:registerNumber', async (req, res) => {
   try {
-    const report = await InternshipReport.findOne({ registerNumber: req.params.registerNumber });
+    const registerNumber = sanitizeInput(req.params.registerNumber);
+    const report = await InternshipReport.findOne({ registerNumber });
     res.json({
       success: true,
       hasReport: !!report,
@@ -264,10 +280,14 @@ app.get('/api/internship-report/:registerNumber', async (req, res) => {
   }
 });
 
-// Student login
+// Student login - FIXED
 app.post('/student-login', async (req, res) => {
   try {
-    const { registerNumber, password } = req.body;
+    let { registerNumber, password } = req.body;
+    
+    // Sanitize inputs
+    registerNumber = sanitizeInput(registerNumber);
+    password = sanitizeInput(password);
     
     if (!registerNumber || !password) {
       return res.status(400).json({ success: false, message: 'Register number and password are required' });
@@ -311,10 +331,19 @@ app.post('/student-login', async (req, res) => {
   }
 });
 
-// Student registration
+// Student registration - FIXED
 app.post('/student-register', async (req, res) => {
   try {
-    const { registerNumber, password, confirmPassword, name, email, department, phone } = req.body;
+    let { registerNumber, password, confirmPassword, name, email, department, phone } = req.body;
+    
+    // Sanitize all inputs
+    registerNumber = sanitizeInput(registerNumber);
+    password = sanitizeInput(password);
+    confirmPassword = sanitizeInput(confirmPassword);
+    name = sanitizeInput(name);
+    email = sanitizeInput(email);
+    department = sanitizeInput(department);
+    phone = sanitizeInput(phone);
     
     // Validation
     if (!registerNumber || !password || !confirmPassword || !name || !email || !department) {
@@ -346,7 +375,7 @@ app.post('/student-register', async (req, res) => {
       name,
       email,
       department,
-      phone: phone || ''
+      phone
     });
     
     await newStudent.save();
@@ -362,14 +391,30 @@ app.post('/student-register', async (req, res) => {
   }
 });
 
-// Submit internship details
+// Submit internship details - FIXED with input sanitization
 app.post('/submit-internship-details', upload.single('offerLetter'), async (req, res) => {
+  console.log('📋 === INTERNSHIP SUBMISSION START ===');
+  console.log('📝 Raw request body keys:', Object.keys(req.body));
+  
   try {
-    const { registerNumber, ...details } = req.body;
+    let { registerNumber, ...details } = req.body;
+    
+    // 🔧 CRITICAL FIX: Sanitize registerNumber if it's an array
+    registerNumber = sanitizeInput(registerNumber);
+    
+    console.log('📊 Sanitized registerNumber:', registerNumber, 'Type:', typeof registerNumber);
     
     if (!registerNumber) {
+      console.log('❌ Missing register number after sanitization');
       return res.status(400).json({ success: false, message: 'Register number is required' });
     }
+    
+    // Sanitize all other string fields
+    Object.keys(details).forEach(key => {
+      if (typeof details[key] === 'string' || Array.isArray(details[key])) {
+        details[key] = sanitizeInput(details[key]);
+      }
+    });
     
     // Prepare internship details
     const internshipData = {
@@ -379,12 +424,16 @@ app.post('/submit-internship-details', upload.single('offerLetter'), async (req,
       offerLetterPath: req.file ? req.file.path : null
     };
     
+    console.log('💾 Saving internship data for:', registerNumber);
+    
     // Save or update internship details
-    await InternshipDetails.findOneAndUpdate(
+    const result = await InternshipDetails.findOneAndUpdate(
       { registerNumber },
       internshipData,
       { upsert: true, new: true }
     );
+    
+    console.log('✅ Internship details saved successfully with ID:', result._id);
     
     res.json({
       success: true,
@@ -392,19 +441,40 @@ app.post('/submit-internship-details', upload.single('offerLetter'), async (req,
       redirectUrl: '/student-dashboard'
     });
   } catch (error) {
-    console.error('Internship submission error:', error);
-    res.status(500).json({ success: false, message: 'Server error during internship submission' });
+    console.error('❌ Internship submission error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error during internship submission: ' + error.message
+    });
   }
+  
+  console.log('📋 === INTERNSHIP SUBMISSION END ===');
 });
 
-// Submit internship report
+// Submit internship report - FIXED with input sanitization  
 app.post('/submit-internship-report', upload.single('internshipReport'), async (req, res) => {
+  console.log('📄 === REPORT SUBMISSION START ===');
+  console.log('📝 Raw request body keys:', Object.keys(req.body));
+  
   try {
-    const { registerNumber, ...reportData } = req.body;
+    let { registerNumber, ...reportData } = req.body;
+    
+    // 🔧 CRITICAL FIX: Sanitize registerNumber if it's an array
+    registerNumber = sanitizeInput(registerNumber);
+    
+    console.log('📊 Sanitized registerNumber:', registerNumber, 'Type:', typeof registerNumber);
     
     if (!registerNumber) {
+      console.log('❌ Missing register number after sanitization');
       return res.status(400).json({ success: false, message: 'Register number is required' });
     }
+    
+    // Sanitize all other string fields
+    Object.keys(reportData).forEach(key => {
+      if (typeof reportData[key] === 'string' || Array.isArray(reportData[key])) {
+        reportData[key] = sanitizeInput(reportData[key]);
+      }
+    });
     
     // Prepare report data
     const reportInfo = {
@@ -414,12 +484,16 @@ app.post('/submit-internship-report', upload.single('internshipReport'), async (
       reportPath: req.file ? req.file.path : null
     };
     
+    console.log('💾 Saving report data for:', registerNumber);
+    
     // Save or update report
-    await InternshipReport.findOneAndUpdate(
+    const result = await InternshipReport.findOneAndUpdate(
       { registerNumber },
       reportInfo,
       { upsert: true, new: true }
     );
+    
+    console.log('✅ Report saved successfully with ID:', result._id);
     
     res.json({
       success: true,
@@ -427,15 +501,24 @@ app.post('/submit-internship-report', upload.single('internshipReport'), async (
       redirectUrl: '/student-dashboard'
     });
   } catch (error) {
-    console.error('Report submission error:', error);
-    res.status(500).json({ success: false, message: 'Server error during report submission' });
+    console.error('❌ Report submission error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error during report submission: ' + error.message
+    });
   }
+  
+  console.log('📄 === REPORT SUBMISSION END ===');
 });
 
-// Faculty login
+// Faculty login - FIXED
 app.post('/faculty-login', async (req, res) => {
   try {
-    const { employeeId, password } = req.body;
+    let { employeeId, password } = req.body;
+    
+    // Sanitize inputs
+    employeeId = sanitizeInput(employeeId);
+    password = sanitizeInput(password);
     
     if (!employeeId || !password) {
       return res.status(400).json({ success: false, message: 'Employee ID and password are required' });
