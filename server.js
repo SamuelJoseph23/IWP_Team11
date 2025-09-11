@@ -44,11 +44,14 @@ const studentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+// 🔧 UPDATED Faculty Schema with additional fields
 const facultySchema = new mongoose.Schema({
   employeeId: { type: String, unique: true, required: true },
   password: { type: String, required: true },
-  name: String,
-  department: String,
+  name: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  department: { type: String, required: true },
+  phone: String,
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -213,6 +216,11 @@ app.get('/student-register', (req, res) => {
 
 app.get('/faculty', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'faculty.html'));
+});
+
+// 🆕 NEW: Teacher registration page route
+app.get('/teacher-register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'teacher_register.html'));
 });
 
 app.get('/internship-details', (req, res) => {
@@ -391,6 +399,66 @@ app.post('/student-register', async (req, res) => {
   }
 });
 
+// 🆕 NEW: Teacher registration route
+app.post('/teacher-register', async (req, res) => {
+  try {
+    let { employeeId, password, name, email, department, phone } = req.body;
+    
+    // Sanitize all inputs
+    employeeId = sanitizeInput(employeeId);
+    password = sanitizeInput(password);
+    name = sanitizeInput(name);
+    email = sanitizeInput(email);
+    department = sanitizeInput(department);
+    phone = sanitizeInput(phone);
+    
+    // Validation
+    if (!employeeId || !password || !name || !email || !department) {
+      return res.status(400).json({ success: false, message: 'All required fields must be filled' });
+    }
+    
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ success: false, message: 'Please enter a valid email address' });
+    }
+    
+    // Check for existing faculty
+    const existingFaculty = await Faculty.findOne({
+      $or: [{ employeeId }, { email }]
+    });
+    
+    if (existingFaculty) {
+      const field = existingFaculty.employeeId === employeeId ? 'employee ID' : 'email';
+      return res.status(400).json({ success: false, message: `Account with this ${field} already exists` });
+    }
+    
+    // Create new faculty member
+    const newFaculty = new Faculty({
+      employeeId,
+      password,
+      name,
+      email,
+      department,
+      phone
+    });
+    
+    await newFaculty.save();
+    
+    res.json({
+      success: true,
+      message: 'Faculty account created successfully! You can now login.',
+    });
+  } catch (error) {
+    console.error('Faculty registration error:', error);
+    res.status(500).json({ success: false, message: 'Server error during registration' });
+  }
+});
+
 // Submit internship details - FIXED with input sanitization
 app.post('/submit-internship-details', upload.single('offerLetter'), async (req, res) => {
   console.log('📋 === INTERNSHIP SUBMISSION START ===');
@@ -530,7 +598,7 @@ app.post('/faculty-login', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid employee ID or password' });
     }
     
-    req.session.faculty = { employeeId: facultyMember.employeeId };
+    req.session.faculty = { employeeId: facultyMember.employeeId, name: facultyMember.name };
     res.json({ success: true, message: 'Faculty login successful!' });
   } catch (error) {
     console.error('Faculty login error:', error);
@@ -565,8 +633,20 @@ async function startServer() {
     const facultyCount = await Faculty.countDocuments();
     if (facultyCount === 0) {
       await Faculty.insertMany([
-        { employeeId: 'FAC001', password: 'faculty123', name: 'Dr. Faculty One', department: 'Computer Science' },
-        { employeeId: 'FAC002', password: 'professor456', name: 'Prof. Faculty Two', department: 'Information Technology' }
+        { 
+          employeeId: 'FAC001', 
+          password: 'faculty123', 
+          name: 'Dr. Faculty One', 
+          email: 'faculty1@christuniversity.in',
+          department: 'Computer Science' 
+        },
+        { 
+          employeeId: 'FAC002', 
+          password: 'professor456', 
+          name: 'Prof. Faculty Two', 
+          email: 'faculty2@christuniversity.in',
+          department: 'Information Technology' 
+        }
       ]);
       console.log('✅ Default faculty accounts created');
     }
@@ -581,9 +661,11 @@ async function startServer() {
       console.log('   - Student login: /student');
       console.log('   - Student registration: /student-register');
       console.log('   - Faculty login: /faculty');
+      console.log('   - Teacher registration: /teacher-register');
       console.log('   - Internship details: /internship-details');
       console.log('   - Internship report: /internship-report');
       console.log('   - Student dashboard: /student-dashboard');
+      console.log('   - Teacher dashboard: /teacher-dashboard');
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Login - Christ University</title>
+    <title>Teacher Registration - Christ University</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,7 +17,7 @@
         }
 
         .container {
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
             background: white;
             border-radius: 20px;
@@ -45,7 +45,6 @@
             text-decoration: none;
             margin-bottom: 20px;
             font-weight: 500;
-            transition: color 0.3s;
         }
 
         .back-link:hover {
@@ -63,7 +62,7 @@
             color: #374151;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid #E5E7EB;
@@ -73,7 +72,7 @@
             box-sizing: border-box;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #3B82F6;
             outline: none;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
@@ -113,61 +112,45 @@
             display: none;
         }
 
-        .register-link {
+        .success-message {
+            color: #059669;
+            background: #D1FAE5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-link {
             text-align: center;
             margin-top: 20px;
         }
 
-        .register-link a {
+        .login-link a {
             color: #3B82F6;
             text-decoration: none;
             font-weight: 500;
         }
 
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
         }
 
         .required {
             color: #DC2626;
         }
-
-        .info-box {
-            background: #EBF8FF;
-            border: 1px solid #BEE3F8;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #2B6CB0;
-            font-size: 14px;
-        }
-
-        .default-accounts {
-            background: #F0FDF4;
-            border: 1px solid #BBF7D0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            color: #166534;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="/" class="back-link">← Back to Home</a>
+        <a href="/faculty" class="back-link">← Back to Faculty Login</a>
         
         <div class="header">
-            <h1>👨‍🏫 Faculty Login</h1>
-            <p>Welcome back! Please sign in to your account.</p>
+            <h1>👨‍🏫 Teacher Registration</h1>
+            <p>Create your faculty account</p>
         </div>
 
-        <div class="info-box">
-            <strong>Faculty Access Portal</strong><br>
-            Use your employee credentials to access the internship management dashboard.
-        </div>
-
-        <form id="facultyLoginForm">
+        <form id="teacherRegisterForm">
             <div class="form-group">
                 <label for="employeeId">Employee ID <span class="required">*</span></label>
                 <input type="text" id="employeeId" name="employeeId" required 
@@ -175,59 +158,126 @@
             </div>
 
             <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required 
+                       placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required 
+                       placeholder="Enter your email address">
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department <span class="required">*</span></label>
+                <select id="department" name="department" required>
+                    <option value="">Select Department</option>
+                    <option value="Computer Science">Computer Science Engineering</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics & Communication">Electronics & Communication</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Business Administration">Business Administration</option>
+                    <option value="Research & Development">Research & Development</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" 
+                       placeholder="Enter your phone number (optional)">
+            </div>
+
+            <div class="form-group">
                 <label for="password">Password <span class="required">*</span></label>
                 <input type="password" id="password" name="password" required 
-                       placeholder="Enter your password">
+                       placeholder="Enter password (minimum 6 characters)">
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required 
+                       placeholder="Re-enter password">
             </div>
 
             <button type="submit" id="submitButton" class="submit-btn">
-                Sign In
+                Create Account
             </button>
 
             <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
         </form>
 
-        <div class="register-link">
-            Don't have an account? <a href="/teacher-register">Register here</a>
-        </div>
-
-        <div class="default-accounts">
-            <strong>Demo Accounts (for testing):</strong><br>
-            • Employee ID: <code>FAC001</code>, Password: <code>faculty123</code><br>
-            • Employee ID: <code>FAC002</code>, Password: <code>professor456</code>
+        <div class="login-link">
+            Already have an account? <a href="/faculty">Login here</a>
         </div>
     </div>
 
     <script>
-        const form = document.getElementById('facultyLoginForm');
+        const form = document.getElementById('teacherRegisterForm');
         const errorDiv = document.getElementById('errorMessage');
+        const successDiv = document.getElementById('successMessage');
         const submitButton = document.getElementById('submitButton');
 
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Hide previous messages
             errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
 
             const employeeId = document.getElementById('employeeId').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const department = document.getElementById('department').value;
+            const phone = document.getElementById('phone').value.trim();
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (!employeeId || !password) {
-                errorDiv.textContent = '❌ Please fill in all fields.';
+            // Validation
+            if (!employeeId || !name || !email || !department || !password || !confirmPassword) {
+                errorDiv.textContent = 'Please fill in all required fields.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters long.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorDiv.textContent = 'Please enter a valid email address.';
                 errorDiv.style.display = 'block';
                 return;
             }
 
             submitButton.disabled = true;
-            submitButton.textContent = '⏳ Signing In...';
+            submitButton.textContent = '⏳ Creating Account...';
 
             try {
-                const response = await fetch('/faculty-login', {
+                const response = await fetch('/teacher-register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         employeeId,
+                        name,
+                        email,
+                        department,
+                        phone,
                         password
                     }),
                 });
@@ -235,30 +285,25 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Store faculty session info
-                    sessionStorage.setItem('facultyEmployeeId', employeeId);
-                    sessionStorage.setItem('facultyLoggedIn', 'true');
+                    successDiv.textContent = '✅ Account created successfully! Redirecting to login...';
+                    successDiv.style.display = 'block';
                     
-                    // Redirect to teacher dashboard
-                    window.location.href = '/teacher-dashboard';
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/faculty';
+                    }, 2000);
                 } else {
-                    errorDiv.textContent = '❌ ' + (data.message || 'Login failed. Please check your credentials.');
+                    errorDiv.textContent = '❌ ' + (data.message || 'Registration failed. Please try again.');
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
                 errorDiv.textContent = '❌ Network error. Please check your connection and try again.';
                 errorDiv.style.display = 'block';
-                console.error('Login error:', error);
+                console.error('Registration error:', error);
             } finally {
                 submitButton.disabled = false;
-                submitButton.textContent = 'Sign In';
+                submitButton.textContent = 'Create Account';
             }
-        });
-
-        // Auto-fill demo credentials on double-click (for testing)
-        document.querySelector('.default-accounts').addEventListener('dblclick', function() {
-            document.getElementById('employeeId').value = 'FAC001';
-            document.getElementById('password').value = 'faculty123';
         });
     </script>
 </body>
