@@ -120,33 +120,48 @@ const Faculty = mongoose.model('Faculty', facultySchema);
 const InternshipDetails = mongoose.model('InternshipDetails', internshipDetailsSchema);
 const InternshipReport = mongoose.model('InternshipReport', internshipReportSchema);
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// CRITICAL: Middleware order matters! Body parsing BEFORE session
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Session configuration with MongoDB Atlas store
+// CORS headers - BEFORE session middleware
+app.use((req, res, next) => {
+    // Allow credentials for session cookies
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
+// Session configuration - CRITICAL: This must be configured properly
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'christ-university-internship-portal-secret',
-    resave: false,
-    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET || 'christ-university-internship-portal-secret-key-very-long-and-secure',
+    resave: false, // Don't save session if unmodified
+    saveUninitialized: false, // Don't create session until something stored
     store: MongoStore.create({
         mongoUrl: MONGO_URI,
         collectionName: 'sessions',
-        touchAfter: 24 * 3600 // lazy session update
+        touchAfter: 24 * 3600 // lazy session update (24 hours)
     }),
     cookie: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        sameSite: 'lax'
-    }
+        secure: false, // Set to true in production with HTTPS
+        httpOnly: true, // Prevent XSS attacks
+        sameSite: 'lax' // CSRF protection
+    },
+    name: 'sessionId' // Change default session name
 }));
 
-// CORS headers
+// Debug middleware to log session info
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    console.log('Session ID:', req.sessionID);
+    console.log('Session Data:', req.session);
     next();
 });
 
@@ -155,7 +170,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Authentication Middleware
 function requireStudentAuth(req, res, next) {
-    if (!req.session.user) {
+    console.log('Checking student auth:', !!req.session.user);
+    if (!req.session || !req.session.user) {
         return res.status(401).json({ 
             success: false, 
             message: 'Please login to access this page',
@@ -166,7 +182,8 @@ function requireStudentAuth(req, res, next) {
 }
 
 function requireFacultyAuth(req, res, next) {
-    if (!req.session.faculty) {
+    console.log('Checking faculty auth:', !!req.session.faculty);
+    if (!req.session || !req.session.faculty) {
         return res.status(401).json({ 
             success: false, 
             message: 'Please login to access this page',
@@ -222,7 +239,7 @@ const upload = multer({
     }
 });
 
-// Routes
+// Routes - Public pages (no auth required)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -244,23 +261,72 @@ app.get('/teacher-register', (req, res) => {
 });
 
 // Protected routes - require authentication
-app.get('/internship-details', requireStudentAuth, (req, res) => {
+app.get('/internship-details', (req, res) => {
+    // Check session before serving file
+    if (!req.session || !req.session.user) {
+        return res.redirect('/student');
+    }
     res.sendFile(path.join(__dirname, 'public', 'internship_details.html'));
 });
 
-app.get('/internship-report', requireStudentAuth, (req, res) => {
+app.get('/internship-report', (req, res) => {
+    // Check session before serving file
+    if (!req.session || !req.session.user) {
+        return res.redirect('/student');
+    }
     res.sendFile(path.join(__dirname, 'public', 'internship_report.html'));
 });
 
-app.get('/student-dashboard', requireStudentAuth, (req, res) => {
+app.get('/student-dashboard', (req, res) => {
+    // Check session before serving file
+    if (!req.session || !req.session.user) {
+        return res.redirect('/student');
+    }
     res.sendFile(path.join(__dirname, 'public', 'student_dashboard.html'));
 });
 
-app.get('/teacher-dashboard', requireFacultyAuth, (req, res) => {
+app.get('/teacher-dashboard', (req, res) => {
+    // Check session before serving file
+    if (!req.session || !req.session.faculty) {
+        return res.redirect('/faculty');
+    }
     res.sendFile(path.join(__dirname, 'public', 'teacher_dashboard.html'));
 });
 
 // API Endpoints with user-specific data
+
+// Get session data for frontend
+app.get('/api/session', (req, res) => {
+    console.log('Session check - Session exists:', !!req.session);
+    console.log('Session check - User exists:', !!req.session?.user);
+    console.log('Session check - Faculty exists:', !!req.session?.faculty);
+
+    if (req.session && req.session.user) {
+        res.json({
+            success: true,
+            user: {
+                registerNumber: req.session.user.registerNumber,
+                name: req.session.user.name,
+                email: req.session.user.email,
+                department: req.session.user.department
+            },
+            userType: 'student'
+        });
+    } else if (req.session && req.session.faculty) {
+        res.json({
+            success: true,
+            user: {
+                employeeId: req.session.faculty.employeeId,
+                name: req.session.faculty.name,
+                email: req.session.faculty.email,
+                department: req.session.faculty.department
+            },
+            userType: 'faculty'
+        });
+    } else {
+        res.json({ success: false, message: 'No active session' });
+    }
+});
 
 // Get current user's profile (session-based)
 app.get('/api/student-profile', requireStudentAuth, async (req, res) => {
@@ -313,31 +379,6 @@ app.get('/api/internship-report', requireStudentAuth, async (req, res) => {
     }
 });
 
-// Get session data for frontend
-app.get('/api/session', (req, res) => {
-    if (req.session.user) {
-        res.json({
-            success: true,
-            user: {
-                registerNumber: req.session.user.registerNumber,
-                name: req.session.user.name
-            },
-            userType: 'student'
-        });
-    } else if (req.session.faculty) {
-        res.json({
-            success: true,
-            user: {
-                employeeId: req.session.faculty.employeeId,
-                name: req.session.faculty.name
-            },
-            userType: 'faculty'
-        });
-    } else {
-        res.json({ success: false, message: 'No active session' });
-    }
-});
-
 // Student login with enhanced session management
 app.post('/student-login', async (req, res) => {
     try {
@@ -345,6 +386,8 @@ app.post('/student-login', async (req, res) => {
 
         registerNumber = sanitizeInput(registerNumber);
         password = sanitizeInput(password);
+
+        console.log('Login attempt for:', registerNumber);
 
         if (!registerNumber || !password) {
             return res.status(400).json({ success: false, message: 'Register number and password are required' });
@@ -366,7 +409,7 @@ app.post('/student-login', async (req, res) => {
             }
         }
 
-        // Set comprehensive session data
+        // CRITICAL: Set comprehensive session data and save explicitly
         req.session.user = {
             registerNumber: student.registerNumber,
             name: student.name,
@@ -375,16 +418,36 @@ app.post('/student-login', async (req, res) => {
             phone: student.phone
         };
 
-        // Check if internship details exist
-        const hasDetails = await InternshipDetails.exists({ registerNumber });
+        // Force session save
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).json({ success: false, message: 'Login failed - session error' });
+            }
 
-        res.json({
-            success: true,
-            message: 'Student login successful!',
-            user: req.session.user,
-            redirectUrl: hasDetails ? '/student-dashboard' : '/internship-details',
-            hasInternshipDetails: !!hasDetails
+            console.log('Session saved successfully for:', registerNumber);
+            console.log('Session ID:', req.sessionID);
+
+            // Check if internship details exist
+            InternshipDetails.exists({ registerNumber }).then(hasDetails => {
+                res.json({
+                    success: true,
+                    message: 'Student login successful!',
+                    user: req.session.user,
+                    redirectUrl: hasDetails ? '/student-dashboard' : '/internship-details',
+                    hasInternshipDetails: !!hasDetails
+                });
+            }).catch(error => {
+                console.error('Error checking internship details:', error);
+                res.json({
+                    success: true,
+                    message: 'Student login successful!',
+                    user: req.session.user,
+                    redirectUrl: '/student-dashboard'
+                });
+            });
         });
+
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ success: false, message: 'Server error during login' });
@@ -447,66 +510,6 @@ app.post('/student-register', async (req, res) => {
         });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ success: false, message: 'Server error during registration' });
-    }
-});
-
-// Teacher registration
-app.post('/teacher-register', async (req, res) => {
-    try {
-        let { employeeId, password, name, email, department, phone } = req.body;
-
-        // Sanitize all inputs
-        employeeId = sanitizeInput(employeeId);
-        password = sanitizeInput(password);
-        name = sanitizeInput(name);
-        email = sanitizeInput(email);
-        department = sanitizeInput(department);
-        phone = sanitizeInput(phone);
-
-        // Validation
-        if (!employeeId || !password || !name || !email || !department) {
-            return res.status(400).json({ success: false, message: 'All required fields must be filled' });
-        }
-
-        if (password.length < 6) {
-            return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ success: false, message: 'Please enter a valid email address' });
-        }
-
-        // Check for existing faculty
-        const existingFaculty = await Faculty.findOne({
-            $or: [{ employeeId }, { email }]
-        });
-
-        if (existingFaculty) {
-            const field = existingFaculty.employeeId === employeeId ? 'employee ID' : 'email';
-            return res.status(400).json({ success: false, message: `Account with this ${field} already exists` });
-        }
-
-        // Create new faculty member
-        const newFaculty = new Faculty({
-            employeeId,
-            password,
-            name,
-            email,
-            department,
-            phone
-        });
-
-        await newFaculty.save();
-
-        res.json({
-            success: true,
-            message: 'Faculty account created successfully! You can now login.'
-        });
-    } catch (error) {
-        console.error('Faculty registration error:', error);
         res.status(500).json({ success: false, message: 'Server error during registration' });
     }
 });
@@ -648,85 +651,24 @@ app.post('/faculty-login', async (req, res) => {
             phone: facultyMember.phone
         };
 
-        res.json({
-            success: true,
-            message: 'Faculty login successful!',
-            faculty: req.session.faculty,
-            redirectUrl: '/teacher-dashboard'
+        // Force session save
+        req.session.save((err) => {
+            if (err) {
+                console.error('Faculty session save error:', err);
+                return res.status(500).json({ success: false, message: 'Login failed - session error' });
+            }
+
+            res.json({
+                success: true,
+                message: 'Faculty login successful!',
+                faculty: req.session.faculty,
+                redirectUrl: '/teacher-dashboard'
+            });
         });
+
     } catch (error) {
         console.error('Faculty login error:', error);
         res.status(500).json({ success: false, message: 'Server error during faculty login' });
-    }
-});
-
-// Faculty API to get all students and their internship data
-app.get('/api/faculty/students', requireFacultyAuth, async (req, res) => {
-    try {
-        const students = await Student.find({}).select('-password');
-        const internshipDetails = await InternshipDetails.find({});
-        const internshipReports = await InternshipReport.find({});
-
-        // Combine student data with their internship information
-        const studentsWithInternships = students.map(student => {
-            const details = internshipDetails.find(d => d.registerNumber === student.registerNumber);
-            const report = internshipReports.find(r => r.registerNumber === student.registerNumber);
-
-            return {
-                ...student.toObject(),
-                internshipDetails: details || null,
-                internshipReport: report || null,
-                hasInternshipDetails: !!details,
-                hasInternshipReport: !!report
-            };
-        });
-
-        res.json({
-            success: true,
-            students: studentsWithInternships,
-            totalStudents: students.length,
-            studentsWithDetails: internshipDetails.length,
-            studentsWithReports: internshipReports.length
-        });
-    } catch (error) {
-        console.error('Error fetching students data:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
-
-// Download file endpoint with user verification
-app.get('/api/download/:registerNumber/:fileType/:filename', requireFacultyAuth, async (req, res) => {
-    try {
-        const { registerNumber, fileType, filename } = req.params;
-
-        // Verify file belongs to a valid submission
-        let fileRecord = null;
-        if (fileType === 'offer-letter') {
-            fileRecord = await InternshipDetails.findOne({ 
-                registerNumber, 
-                offerLetterFilename: filename 
-            });
-        } else if (fileType === 'report') {
-            fileRecord = await InternshipReport.findOne({ 
-                registerNumber, 
-                reportFilename: filename 
-            });
-        }
-
-        if (!fileRecord) {
-            return res.status(404).json({ success: false, message: 'File not found' });
-        }
-
-        const filePath = path.join(__dirname, 'uploads', registerNumber, filename);
-
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ success: false, message: 'File not found on server' });
-        }
-
-        res.download(filePath);
-    } catch (error) {
-        console.error('File download error:', error);
-        res.status(500).json({ success: false, message: 'Server error during file download' });
     }
 });
 
@@ -737,7 +679,7 @@ app.post('/logout', (req, res) => {
             console.error('Logout error:', err);
             res.status(500).json({ success: false, message: 'Logout failed' });
         } else {
-            res.clearCookie('connect.sid'); // Clear session cookie
+            res.clearCookie('sessionId'); // Clear session cookie
             res.json({ 
                 success: true, 
                 message: 'Logged out successfully',
