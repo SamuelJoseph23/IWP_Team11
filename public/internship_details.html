@@ -57,6 +57,39 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .form-container {
             padding: 2rem;
         }
@@ -91,9 +124,25 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
+        .readonly-field {
+            background-color: #f8f9fa !important;
+            color: #6c757d !important;
+            cursor: not-allowed !important;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
 
         .internship-type-selector {
@@ -207,52 +256,8 @@
             color: #0066cc;
         }
 
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .readonly-field {
-            background-color: #f8f9fa !important;
-            color: #6c757d !important;
-            cursor: not-allowed !important;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
-            margin: 2rem 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
         @media (max-width: 768px) {
-            .internship-type-selector {
-                grid-template-columns: 1fr;
-            }
-
+            .internship-type-selector,
             .grid-2 {
                 grid-template-columns: 1fr;
             }
@@ -277,11 +282,23 @@
         </div>
 
         <div class="form-container">
-            <div class="loading" id="loadingSection">
+            <!-- Loading State -->
+            <div class="loading-container" id="loadingContainer">
                 <div class="spinner"></div>
                 <p>Loading your information...</p>
             </div>
 
+            <!-- Error State -->
+            <div id="errorContainer" style="display: none;">
+                <div class="error-message" id="errorMessage">
+                    Error loading form. Please try again.
+                </div>
+                <button class="submit-btn" onclick="window.location.href='/student'">
+                    Return to Login
+                </button>
+            </div>
+
+            <!-- Form -->
             <form id="internshipForm" style="display: none;">
                 <div class="section-title">Select Internship Type</div>
                 <div class="internship-type-selector">
@@ -327,7 +344,7 @@
 
                     <div class="form-group">
                         <label for="companyName">Company Name *</label>
-                        <input type="text" id="companyName" name="companyName">
+                        <input type="text" id="companyName" name="companyName" required>
                     </div>
 
                     <div class="grid-2">
@@ -374,7 +391,7 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="jobTitle">Job Title/Position *</label>
-                            <input type="text" id="jobTitle" name="jobTitle">
+                            <input type="text" id="jobTitle" name="jobTitle" required>
                         </div>
                         <div class="form-group">
                             <label for="jobDepartment">Department/Team</label>
@@ -390,11 +407,11 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="offStartDate">Start Date *</label>
-                            <input type="date" id="offStartDate" name="startDate">
+                            <input type="date" id="offStartDate" name="startDate" required>
                         </div>
                         <div class="form-group">
                             <label for="offEndDate">End Date *</label>
-                            <input type="date" id="offEndDate" name="endDate">
+                            <input type="date" id="offEndDate" name="endDate" required>
                         </div>
                     </div>
 
@@ -462,7 +479,7 @@
 
                     <div class="form-group">
                         <label for="projectTitle">Project/Research Title *</label>
-                        <input type="text" id="projectTitle" name="projectTitle">
+                        <input type="text" id="projectTitle" name="projectTitle" required>
                     </div>
 
                     <div class="form-group">
@@ -473,11 +490,11 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="onStartDate">Start Date *</label>
-                            <input type="date" id="onStartDate" name="startDate">
+                            <input type="date" id="onStartDate" name="startDate" required>
                         </div>
                         <div class="form-group">
                             <label for="onEndDate">End Date *</label>
-                            <input type="date" id="onEndDate" name="endDate">
+                            <input type="date" id="onEndDate" name="endDate" required>
                         </div>
                     </div>
 
@@ -490,7 +507,7 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="mentorName">Mentor Name *</label>
-                            <input type="text" id="mentorName" name="mentorName">
+                            <input type="text" id="mentorName" name="mentorName" required>
                         </div>
                         <div class="form-group">
                             <label for="mentorDesignation">Designation *</label>
@@ -508,7 +525,7 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="mentorEmail">Email *</label>
-                            <input type="email" id="mentorEmail" name="mentorEmail">
+                            <input type="email" id="mentorEmail" name="mentorEmail" required>
                         </div>
                         <div class="form-group">
                             <label for="mentorPhone">Phone Number</label>
@@ -545,59 +562,133 @@
     <script>
         let userData = null;
         let existingData = null;
+        let authCheckAttempts = 0;
+        const MAX_AUTH_ATTEMPTS = 3;
 
-        // Load user data and existing internship details on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                await checkAuthentication();
-                await loadUserData();
-                await loadExistingData();
-                initializeForm();
-            } catch (error) {
-                console.error('Error initializing form:', error);
-                alert('Error loading form. Please try logging in again.');
-                window.location.href = '/student';
-            }
-        });
-
+        // Enhanced authentication check with retries
         async function checkAuthentication() {
-            const response = await fetch('/api/session');
-            const data = await response.json();
+            try {
+                console.log('Checking authentication...');
+                const response = await fetch('/api/session', {
+                    method: 'GET',
+                    credentials: 'include', // CRITICAL: Include cookies
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-            if (!data.success || data.userType !== 'student') {
-                throw new Error('Not authenticated as student');
+                console.log('Session check response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Session check response:', data);
+
+                if (!data.success || data.userType !== 'student') {
+                    throw new Error('Not authenticated as student');
+                }
+
+                userData = data.user;
+                console.log('Authentication successful for:', userData.name);
+                return true;
+
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                authCheckAttempts++;
+
+                if (authCheckAttempts < MAX_AUTH_ATTEMPTS) {
+                    console.log(`Retrying authentication check (attempt ${authCheckAttempts + 1}/${MAX_AUTH_ATTEMPTS})...`);
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+                    return await checkAuthentication();
+                }
+
+                throw error;
             }
-
-            userData = data.user;
         }
 
         async function loadUserData() {
-            const response = await fetch('/api/student-profile');
-            const data = await response.json();
+            try {
+                console.log('Loading user profile...');
+                const response = await fetch('/api/student-profile', {
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-            if (data.success) {
-                const profile = data.profile;
+                if (!response.ok) {
+                    throw new Error(`Failed to load profile: ${response.status}`);
+                }
 
-                // Auto-populate user fields
-                document.getElementById('studentName').value = profile.name;
-                document.getElementById('registerNumber').value = profile.registerNumber;
-                document.getElementById('department').value = profile.department;
-                document.getElementById('studentEmail').value = profile.email;
+                const data = await response.json();
+                console.log('Profile loaded:', data);
+
+                if (data.success) {
+                    const profile = data.profile;
+
+                    // Auto-populate user fields
+                    document.getElementById('studentName').value = profile.name;
+                    document.getElementById('registerNumber').value = profile.registerNumber;
+                    document.getElementById('department').value = profile.department;
+                    document.getElementById('studentEmail').value = profile.email;
+
+                    console.log('User data populated successfully');
+                } else {
+                    throw new Error(data.message || 'Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                throw error;
             }
         }
 
         async function loadExistingData() {
-            const response = await fetch('/api/internship-details');
-            const data = await response.json();
+            try {
+                console.log('Loading existing internship data...');
+                const response = await fetch('/api/internship-details', {
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-            if (data.success && data.hasDetails) {
-                existingData = data.details;
-                document.getElementById('submitBtn').textContent = 'Update Internship Details';
+                if (!response.ok) {
+                    throw new Error(`Failed to load internship data: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Existing data response:', data);
+
+                if (data.success && data.hasDetails) {
+                    existingData = data.details;
+                    document.getElementById('submitBtn').textContent = 'Update Internship Details';
+                    console.log('Existing internship data found');
+                } else {
+                    console.log('No existing internship data found');
+                }
+            } catch (error) {
+                console.error('Error loading existing data:', error);
+                // Non-critical error, don't throw
             }
         }
 
+        function showError(message) {
+            console.error('Showing error:', message);
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('internshipForm').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorContainer').style.display = 'block';
+        }
+
         function initializeForm() {
-            document.getElementById('loadingSection').style.display = 'none';
+            console.log('Initializing form...');
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('errorContainer').style.display = 'none';
             document.getElementById('internshipForm').style.display = 'block';
 
             // Populate existing data if available
@@ -611,8 +702,15 @@
                 const fileInfo = document.getElementById('fileInfo');
 
                 if (file) {
-                    fileInfo.innerHTML = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                    const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
+                    fileInfo.innerHTML = `Selected: ${file.name} (${sizeInMB} MB)`;
                     fileInfo.style.display = 'block';
+
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('File size exceeds 10MB limit. Please choose a smaller file.');
+                        this.value = '';
+                        fileInfo.style.display = 'none';
+                    }
                 } else {
                     fileInfo.style.display = 'none';
                 }
@@ -620,9 +718,12 @@
 
             // Form submission
             document.getElementById('internshipForm').addEventListener('submit', handleSubmit);
+
+            console.log('Form initialized successfully');
         }
 
         function populateExistingData() {
+            console.log('Populating existing data...');
             const data = existingData;
 
             // Select internship type
@@ -670,14 +771,21 @@
                 document.getElementById('fileInfo').innerHTML = `Current file: ${data.offerLetterOriginalName}`;
                 document.getElementById('fileInfo').style.display = 'block';
             }
+
+            console.log('Existing data populated');
         }
 
         function selectType(type) {
+            console.log('Selecting internship type:', type);
+
+            // Find the clicked card
+            const clickedCard = document.querySelector(`input[value="${type}"]`).closest('.type-card');
+
             // Update UI
             document.querySelectorAll('.type-card').forEach(card => {
                 card.classList.remove('active');
             });
-            event.target.closest('.type-card').classList.add('active');
+            clickedCard.classList.add('active');
 
             // Update radio button
             document.getElementById(type).checked = true;
@@ -687,10 +795,38 @@
                 section.classList.remove('active');
             });
             document.getElementById(type + 'Details').classList.add('active');
+
+            // Update required fields based on type
+            updateRequiredFields(type);
+        }
+
+        function updateRequiredFields(type) {
+            // Reset all required fields
+            document.querySelectorAll('[required]').forEach(field => {
+                if (!field.closest('.readonly-field')) {
+                    field.required = false;
+                }
+            });
+
+            // Set required fields based on type
+            if (type === 'offcampus') {
+                document.getElementById('companyName').required = true;
+                document.getElementById('jobTitle').required = true;
+                document.getElementById('offStartDate').required = true;
+                document.getElementById('offEndDate').required = true;
+            } else if (type === 'oncampus') {
+                document.getElementById('universityDepartment').required = true;
+                document.getElementById('projectTitle').required = true;
+                document.getElementById('mentorName').required = true;
+                document.getElementById('mentorEmail').required = true;
+                document.getElementById('onStartDate').required = true;
+                document.getElementById('onEndDate').required = true;
+            }
         }
 
         async function handleSubmit(e) {
             e.preventDefault();
+            console.log('Form submission started...');
 
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.textContent;
@@ -711,28 +847,83 @@
                     formData.set('endDate', document.getElementById('onEndDate').value);
                 }
 
+                console.log('Submitting form data...');
+
                 const response = await fetch('/submit-internship-details', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    credentials: 'include' // CRITICAL: Include cookies
                 });
 
+                console.log('Submission response status:', response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
                 const data = await response.json();
+                console.log('Submission response:', data);
 
                 if (data.success) {
                     alert(data.message);
                     window.location.href = data.redirectUrl || '/student-dashboard';
                 } else {
-                    throw new Error(data.message);
+                    throw new Error(data.message || 'Submission failed');
                 }
 
             } catch (error) {
                 console.error('Submission error:', error);
-                alert('Error submitting form: ' + error.message);
+
+                if (error.message.includes('401') || error.message.includes('Please login')) {
+                    alert('Your session has expired. Please login again.');
+                    window.location.href = '/student';
+                } else {
+                    alert('Error submitting form: ' + error.message);
+                }
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
             }
         }
+
+        // Page load initialization
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Page loaded, initializing...');
+
+            try {
+                // Step 1: Check authentication
+                await checkAuthentication();
+
+                // Step 2: Load user data
+                await loadUserData();
+
+                // Step 3: Load existing data (optional)
+                await loadExistingData();
+
+                // Step 4: Initialize form
+                initializeForm();
+
+                console.log('Page initialization complete');
+
+            } catch (error) {
+                console.error('Page initialization failed:', error);
+                let errorMessage = 'Failed to load the form. ';
+
+                if (error.message.includes('Not authenticated')) {
+                    errorMessage += 'Please login again.';
+                } else if (error.message.includes('Network')) {
+                    errorMessage += 'Please check your internet connection.';
+                } else {
+                    errorMessage += 'Please try refreshing the page.';
+                }
+
+                showError(errorMessage);
+            }
+        });
+
+        // Make selectType globally available for onclick handlers
+        window.selectType = selectType;
     </script>
 </body>
 </html>

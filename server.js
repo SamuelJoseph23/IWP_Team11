@@ -14,19 +14,16 @@ const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI ||
 'mongodb+srv://samueljoseph:samuel@iwpcluster.f754koy.mongodb.net/IWP_Team11?retryWrites=true&w=majority&appName=IWPCluster';
 
+console.log('🔗 MongoDB URI configured');
+
 // MongoDB Connection Function
 async function connectDB() {
     try {
         await mongoose.connect(MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 30000,
-            connectTimeoutMS: 30000,
-            socketTimeoutMS: 30000,
         });
         console.log('✅ MongoDB Atlas Connected Successfully');
-        console.log('🗄️ Database: IWP_Team11');
-        console.log('☁️ Provider: MongoDB Atlas');
     } catch (error) {
         console.error('❌ MongoDB Atlas Connection Error:', error);
         process.exit(1);
@@ -57,7 +54,6 @@ const facultySchema = new mongoose.Schema({
 const internshipDetailsSchema = new mongoose.Schema({
     registerNumber: { type: String, required: true, index: true },
     internshipType: { type: String, required: true },
-    // Student Details (auto-populated from session)
     studentName: String,
     department: String,
     studentEmail: String,
@@ -84,7 +80,7 @@ const internshipDetailsSchema = new mongoose.Schema({
     mentorPhone: String,
     expectedDeliverables: String,
     // Common fields
-    startDate: [String], // Array to handle both date formats
+    startDate: [String],
     endDate: [String],
     learningObjectives: String,
     additionalNotes: String,
@@ -108,7 +104,6 @@ const internshipReportSchema = new mongoose.Schema({
     summary: String,
     rating: { type: Number, min: 0, max: 10 },
     declaration: Boolean,
-    // File info
     reportFilename: String,
     reportPath: String,
     submittedAt: { type: Date, default: Date.now }
@@ -120,78 +115,78 @@ const Faculty = mongoose.model('Faculty', facultySchema);
 const InternshipDetails = mongoose.model('InternshipDetails', internshipDetailsSchema);
 const InternshipReport = mongoose.model('InternshipReport', internshipReportSchema);
 
-// CRITICAL: Middleware order matters! Body parsing BEFORE session
+// Trust proxy for Railway deployment
+app.set('trust proxy', 1);
+
+// CRITICAL: Middleware order is VERY important!
+
+// 1. Body parsing middleware FIRST
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// CORS headers - BEFORE session middleware
+// 2. CORS middleware BEFORE session - CRITICAL for session cookies
 app.use((req, res, next) => {
-    // Allow credentials for session cookies
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    const origin = req.headers.origin;
+
+    // Allow specific origins in production, all in development
+    if (process.env.NODE_ENV === 'production') {
+        // Add your Railway domain here when deploying
+        const allowedOrigins = ['https://your-railway-domain.up.railway.app'];
+        if (allowedOrigins.includes(origin)) {
+            res.header('Access-Control-Allow-Origin', origin);
+        }
+    } else {
+        // Development - allow localhost
+        res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    }
+
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Cookie');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
-    // Handle preflight requests
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
     }
     next();
 });
 
-// Session configuration - CRITICAL: This must be configured properly
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'christ-university-internship-portal-secret-key-very-long-and-secure',
-    resave: false, // Don't save session if unmodified
-    saveUninitialized: false, // Don't create session until something stored
+// 3. Session middleware - CRITICAL configuration
+const sessionConfig = {
+    name: 'internship_session', // Custom session name
+    secret: process.env.SESSION_SECRET || 'christ-university-super-secret-key-12345-very-long-and-secure',
+    resave: false,
+    saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: MONGO_URI,
-        collectionName: 'sessions',
-        touchAfter: 24 * 3600 // lazy session update (24 hours)
+        collectionName: 'user_sessions',
+        ttl: 24 * 60 * 60 // 24 hours in seconds
     }),
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        secure: false, // Set to true in production with HTTPS
-        httpOnly: true, // Prevent XSS attacks
-        sameSite: 'lax' // CSRF protection
-    },
-    name: 'sessionId' // Change default session name
-}));
+        secure: process.env.NODE_ENV === 'production', // Only use secure in production
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    }
+};
 
-// Debug middleware to log session info
+app.use(session(sessionConfig));
+
+// 4. Debug middleware to track sessions
 app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     console.log('Session ID:', req.sessionID);
-    console.log('Session Data:', req.session);
+    console.log('Session exists:', !!req.session);
+    console.log('User in session:', !!req.session?.user);
+    console.log('Faculty in session:', !!req.session?.faculty);
+    if (req.session?.user) {
+        console.log('User data:', req.session.user.registerNumber, req.session.user.name);
+    }
+    console.log('---');
     next();
 });
 
-// Serve static files
+// 5. Static files middleware
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Authentication Middleware
-function requireStudentAuth(req, res, next) {
-    console.log('Checking student auth:', !!req.session.user);
-    if (!req.session || !req.session.user) {
-        return res.status(401).json({ 
-            success: false, 
-            message: 'Please login to access this page',
-            redirectUrl: '/student'
-        });
-    }
-    next();
-}
-
-function requireFacultyAuth(req, res, next) {
-    console.log('Checking faculty auth:', !!req.session.faculty);
-    if (!req.session || !req.session.faculty) {
-        return res.status(401).json({ 
-            success: false, 
-            message: 'Please login to access this page',
-            redirectUrl: '/faculty'
-        });
-    }
-    next();
-}
 
 // Input sanitization function
 function sanitizeInput(input) {
@@ -201,11 +196,56 @@ function sanitizeInput(input) {
     return String(input || '').trim();
 }
 
-// Configure multer for file uploads with user-specific paths
+// Authentication Middleware with detailed logging
+function requireStudentAuth(req, res, next) {
+    console.log('🔐 Student Auth Check:');
+    console.log('  - Session exists:', !!req.session);
+    console.log('  - Session ID:', req.sessionID);
+    console.log('  - User in session:', !!req.session?.user);
+
+    if (!req.session || !req.session.user) {
+        console.log('❌ Student auth failed - redirecting to login');
+        if (req.xhr || req.headers.accept?.indexOf('json') > -1) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please login to access this page',
+                redirectUrl: '/student'
+            });
+        } else {
+            return res.redirect('/student');
+        }
+    }
+
+    console.log('✅ Student auth successful for:', req.session.user.registerNumber);
+    next();
+}
+
+function requireFacultyAuth(req, res, next) {
+    console.log('🔐 Faculty Auth Check:');
+    console.log('  - Session exists:', !!req.session);
+    console.log('  - Faculty in session:', !!req.session?.faculty);
+
+    if (!req.session || !req.session.faculty) {
+        console.log('❌ Faculty auth failed');
+        if (req.xhr || req.headers.accept?.indexOf('json') > -1) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please login to access this page',
+                redirectUrl: '/faculty'
+            });
+        } else {
+            return res.redirect('/faculty');
+        }
+    }
+
+    console.log('✅ Faculty auth successful');
+    next();
+}
+
+// Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Create user-specific upload directory
-        const registerNumber = req.session.user?.registerNumber || 'unknown';
+        const registerNumber = req.session?.user?.registerNumber || 'unknown';
         const uploadPath = path.join(__dirname, 'uploads', registerNumber);
 
         if (!fs.existsSync(uploadPath)) {
@@ -214,7 +254,7 @@ const storage = multer.diskStorage({
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        const registerNumber = req.session.user?.registerNumber || 'unknown';
+        const registerNumber = req.session?.user?.registerNumber || 'unknown';
         const timestamp = Date.now();
         const randomSuffix = Math.round(Math.random() * 1E9);
         const filename = `${registerNumber}-${timestamp}-${randomSuffix}${path.extname(file.originalname)}`;
@@ -239,7 +279,7 @@ const upload = multer({
     }
 });
 
-// Routes - Public pages (no auth required)
+// PUBLIC ROUTES (no authentication required)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -260,48 +300,38 @@ app.get('/teacher-register', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'teacher_register.html'));
 });
 
-// Protected routes - require authentication
-app.get('/internship-details', (req, res) => {
-    // Check session before serving file
-    if (!req.session || !req.session.user) {
-        return res.redirect('/student');
-    }
+// PROTECTED ROUTES (authentication required)
+app.get('/internship-details', requireStudentAuth, (req, res) => {
+    console.log('📋 Serving internship details page');
     res.sendFile(path.join(__dirname, 'public', 'internship_details.html'));
 });
 
-app.get('/internship-report', (req, res) => {
-    // Check session before serving file
-    if (!req.session || !req.session.user) {
-        return res.redirect('/student');
-    }
+app.get('/internship-report', requireStudentAuth, (req, res) => {
+    console.log('📄 Serving internship report page');
     res.sendFile(path.join(__dirname, 'public', 'internship_report.html'));
 });
 
-app.get('/student-dashboard', (req, res) => {
-    // Check session before serving file
-    if (!req.session || !req.session.user) {
-        return res.redirect('/student');
-    }
+app.get('/student-dashboard', requireStudentAuth, (req, res) => {
+    console.log('🎓 Serving student dashboard');
     res.sendFile(path.join(__dirname, 'public', 'student_dashboard.html'));
 });
 
-app.get('/teacher-dashboard', (req, res) => {
-    // Check session before serving file
-    if (!req.session || !req.session.faculty) {
-        return res.redirect('/faculty');
-    }
+app.get('/teacher-dashboard', requireFacultyAuth, (req, res) => {
+    console.log('👨‍🏫 Serving teacher dashboard');
     res.sendFile(path.join(__dirname, 'public', 'teacher_dashboard.html'));
 });
 
-// API Endpoints with user-specific data
+// API ROUTES
 
-// Get session data for frontend
+// Session check endpoint
 app.get('/api/session', (req, res) => {
-    console.log('Session check - Session exists:', !!req.session);
-    console.log('Session check - User exists:', !!req.session?.user);
-    console.log('Session check - Faculty exists:', !!req.session?.faculty);
+    console.log('🔍 Session check request');
+    console.log('  - Session exists:', !!req.session);
+    console.log('  - User exists:', !!req.session?.user);
+    console.log('  - Faculty exists:', !!req.session?.faculty);
 
-    if (req.session && req.session.user) {
+    if (req.session?.user) {
+        console.log('  - Returning student session data');
         res.json({
             success: true,
             user: {
@@ -312,7 +342,8 @@ app.get('/api/session', (req, res) => {
             },
             userType: 'student'
         });
-    } else if (req.session && req.session.faculty) {
+    } else if (req.session?.faculty) {
+        console.log('  - Returning faculty session data');
         res.json({
             success: true,
             user: {
@@ -324,11 +355,12 @@ app.get('/api/session', (req, res) => {
             userType: 'faculty'
         });
     } else {
+        console.log('  - No active session found');
         res.json({ success: false, message: 'No active session' });
     }
 });
 
-// Get current user's profile (session-based)
+// Get student profile
 app.get('/api/student-profile', requireStudentAuth, async (req, res) => {
     try {
         const registerNumber = req.session.user.registerNumber;
@@ -345,7 +377,7 @@ app.get('/api/student-profile', requireStudentAuth, async (req, res) => {
     }
 });
 
-// Get current user's internship details
+// Get internship details
 app.get('/api/internship-details', requireStudentAuth, async (req, res) => {
     try {
         const registerNumber = req.session.user.registerNumber;
@@ -362,7 +394,7 @@ app.get('/api/internship-details', requireStudentAuth, async (req, res) => {
     }
 });
 
-// Get current user's internship report
+// Get internship report
 app.get('/api/internship-report', requireStudentAuth, async (req, res) => {
     try {
         const registerNumber = req.session.user.registerNumber;
@@ -379,26 +411,34 @@ app.get('/api/internship-report', requireStudentAuth, async (req, res) => {
     }
 });
 
-// Student login with enhanced session management
+// Student login
 app.post('/student-login', async (req, res) => {
     try {
+        console.log('👤 Student login attempt');
         let { registerNumber, password } = req.body;
 
         registerNumber = sanitizeInput(registerNumber);
         password = sanitizeInput(password);
 
-        console.log('Login attempt for:', registerNumber);
+        console.log('  - Register Number:', registerNumber);
 
         if (!registerNumber || !password) {
-            return res.status(400).json({ success: false, message: 'Register number and password are required' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Register number and password are required' 
+            });
         }
 
         const student = await Student.findOne({ registerNumber, password });
 
         if (!student) {
+            console.log('  - Student not found or invalid password');
             const studentExists = await Student.findOne({ registerNumber });
             if (studentExists) {
-                return res.status(401).json({ success: false, message: 'Invalid password. Please try again.' });
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'Invalid password. Please try again.' 
+                });
             } else {
                 return res.status(401).json({
                     success: false,
@@ -409,7 +449,9 @@ app.post('/student-login', async (req, res) => {
             }
         }
 
-        // CRITICAL: Set comprehensive session data and save explicitly
+        console.log('  - Student found, creating session');
+
+        // Set session data
         req.session.user = {
             registerNumber: student.registerNumber,
             name: student.name,
@@ -418,38 +460,35 @@ app.post('/student-login', async (req, res) => {
             phone: student.phone
         };
 
-        // Force session save
-        req.session.save((err) => {
-            if (err) {
-                console.error('Session save error:', err);
-                return res.status(500).json({ success: false, message: 'Login failed - session error' });
-            }
-
-            console.log('Session saved successfully for:', registerNumber);
-            console.log('Session ID:', req.sessionID);
-
-            // Check if internship details exist
-            InternshipDetails.exists({ registerNumber }).then(hasDetails => {
-                res.json({
-                    success: true,
-                    message: 'Student login successful!',
-                    user: req.session.user,
-                    redirectUrl: hasDetails ? '/student-dashboard' : '/internship-details',
-                    hasInternshipDetails: !!hasDetails
-                });
-            }).catch(error => {
-                console.error('Error checking internship details:', error);
-                res.json({
-                    success: true,
-                    message: 'Student login successful!',
-                    user: req.session.user,
-                    redirectUrl: '/student-dashboard'
-                });
+        // CRITICAL: Force session save and wait for completion
+        await new Promise((resolve, reject) => {
+            req.session.save((err) => {
+                if (err) {
+                    console.error('❌ Session save error:', err);
+                    reject(err);
+                } else {
+                    console.log('✅ Session saved successfully');
+                    console.log('  - Session ID:', req.sessionID);
+                    console.log('  - User in session:', req.session.user.registerNumber);
+                    resolve();
+                }
             });
         });
 
+        // Check internship details
+        const hasDetails = await InternshipDetails.exists({ registerNumber });
+
+        console.log('  - Login successful, sending response');
+        res.json({
+            success: true,
+            message: 'Student login successful!',
+            user: req.session.user,
+            redirectUrl: hasDetails ? '/student-dashboard' : '/internship-details',
+            hasInternshipDetails: !!hasDetails
+        });
+
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('❌ Login error:', error);
         res.status(500).json({ success: false, message: 'Server error during login' });
     }
 });
@@ -459,7 +498,7 @@ app.post('/student-register', async (req, res) => {
     try {
         let { registerNumber, password, confirmPassword, name, email, department, phone } = req.body;
 
-        // Sanitize all inputs
+        // Sanitize inputs
         registerNumber = sanitizeInput(registerNumber);
         password = sanitizeInput(password);
         confirmPassword = sanitizeInput(confirmPassword);
@@ -481,7 +520,7 @@ app.post('/student-register', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
         }
 
-        // Check for existing user
+        // Check existing user
         const existingUser = await Student.findOne({
             $or: [{ registerNumber }, { email }]
         });
@@ -493,12 +532,7 @@ app.post('/student-register', async (req, res) => {
 
         // Create new student
         const newStudent = new Student({
-            registerNumber,
-            password,
-            name,
-            email,
-            department,
-            phone
+            registerNumber, password, name, email, department, phone
         });
 
         await newStudent.save();
@@ -514,24 +548,26 @@ app.post('/student-register', async (req, res) => {
     }
 });
 
-// Submit internship details with user association
+// Submit internship details
 app.post('/submit-internship-details', requireStudentAuth, upload.single('offerLetter'), async (req, res) => {
-    console.log('📋 === INTERNSHIP SUBMISSION START ===');
-
     try {
+        console.log('📋 Internship details submission');
         const registerNumber = req.session.user.registerNumber;
         const studentData = req.session.user;
 
+        console.log('  - User:', registerNumber);
+        console.log('  - File uploaded:', !!req.file);
+
         let details = { ...req.body };
 
-        // Sanitize all string fields
+        // Sanitize fields
         Object.keys(details).forEach(key => {
             if (typeof details[key] === 'string' || Array.isArray(details[key])) {
                 details[key] = sanitizeInput(details[key]);
             }
         });
 
-        // Prepare internship details with auto-populated user data
+        // Prepare data
         const internshipData = {
             registerNumber,
             studentName: studentData.name,
@@ -543,16 +579,14 @@ app.post('/submit-internship-details', requireStudentAuth, upload.single('offerL
             offerLetterOriginalName: req.file ? req.file.originalname : null
         };
 
-        console.log('💾 Saving internship data for:', registerNumber);
-
-        // Save or update internship details
+        // Save to database
         const result = await InternshipDetails.findOneAndUpdate(
             { registerNumber },
             internshipData,
             { upsert: true, new: true }
         );
 
-        console.log('✅ Internship details saved successfully with ID:', result._id);
+        console.log('✅ Internship details saved:', result._id);
 
         res.json({
             success: true,
@@ -563,31 +597,28 @@ app.post('/submit-internship-details', requireStudentAuth, upload.single('offerL
         console.error('❌ Internship submission error:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error during internship submission: ' + error.message
+            message: 'Server error: ' + error.message
         });
     }
-
-    console.log('📋 === INTERNSHIP SUBMISSION END ===');
 });
 
-// Submit internship report with user association
+// Submit internship report
 app.post('/submit-internship-report', requireStudentAuth, upload.single('internshipReport'), async (req, res) => {
-    console.log('📄 === REPORT SUBMISSION START ===');
-
     try {
+        console.log('📄 Report submission');
         const registerNumber = req.session.user.registerNumber;
         const studentData = req.session.user;
 
         let reportData = { ...req.body };
 
-        // Sanitize all string fields
+        // Sanitize fields
         Object.keys(reportData).forEach(key => {
             if (typeof reportData[key] === 'string' || Array.isArray(reportData[key])) {
                 reportData[key] = sanitizeInput(reportData[key]);
             }
         });
 
-        // Prepare report data with auto-populated user data
+        // Prepare data
         const reportInfo = {
             registerNumber,
             name: studentData.name,
@@ -597,16 +628,14 @@ app.post('/submit-internship-report', requireStudentAuth, upload.single('interns
             reportPath: req.file ? req.file.path : null
         };
 
-        console.log('💾 Saving report data for:', registerNumber);
-
-        // Save or update report
+        // Save to database
         const result = await InternshipReport.findOneAndUpdate(
             { registerNumber },
             reportInfo,
             { upsert: true, new: true }
         );
 
-        console.log('✅ Report saved successfully with ID:', result._id);
+        console.log('✅ Report saved:', result._id);
 
         res.json({
             success: true,
@@ -617,14 +646,12 @@ app.post('/submit-internship-report', requireStudentAuth, upload.single('interns
         console.error('❌ Report submission error:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error during report submission: ' + error.message
+            message: 'Server error: ' + error.message
         });
     }
-
-    console.log('📄 === REPORT SUBMISSION END ===');
 });
 
-// Faculty login with session management
+// Faculty login
 app.post('/faculty-login', async (req, res) => {
     try {
         let { employeeId, password } = req.body;
@@ -642,7 +669,6 @@ app.post('/faculty-login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid employee ID or password' });
         }
 
-        // Set comprehensive session data
         req.session.faculty = {
             employeeId: facultyMember.employeeId,
             name: facultyMember.name,
@@ -652,34 +678,35 @@ app.post('/faculty-login', async (req, res) => {
         };
 
         // Force session save
-        req.session.save((err) => {
-            if (err) {
-                console.error('Faculty session save error:', err);
-                return res.status(500).json({ success: false, message: 'Login failed - session error' });
-            }
-
-            res.json({
-                success: true,
-                message: 'Faculty login successful!',
-                faculty: req.session.faculty,
-                redirectUrl: '/teacher-dashboard'
+        await new Promise((resolve, reject) => {
+            req.session.save((err) => {
+                if (err) reject(err);
+                else resolve();
             });
         });
 
+        res.json({
+            success: true,
+            message: 'Faculty login successful!',
+            faculty: req.session.faculty,
+            redirectUrl: '/teacher-dashboard'
+        });
     } catch (error) {
         console.error('Faculty login error:', error);
         res.status(500).json({ success: false, message: 'Server error during faculty login' });
     }
 });
 
-// Logout with session cleanup
+// Logout
 app.post('/logout', (req, res) => {
+    console.log('👋 Logout request');
     req.session.destroy((err) => {
         if (err) {
             console.error('Logout error:', err);
             res.status(500).json({ success: false, message: 'Logout failed' });
         } else {
-            res.clearCookie('sessionId'); // Clear session cookie
+            console.log('✅ Session destroyed');
+            res.clearCookie('internship_session');
             res.json({ 
                 success: true, 
                 message: 'Logged out successfully',
@@ -689,18 +716,23 @@ app.post('/logout', (req, res) => {
     });
 });
 
-// Error handling middleware
+// Error handling
 app.use((err, req, res, next) => {
-    console.error('Unhandled error:', err);
+    console.error('💥 Unhandled error:', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
 });
 
-// Initialize database and start server
+// 404 handler
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Initialize server
 async function startServer() {
     try {
         await connectDB();
 
-        // Create default faculty accounts if they don't exist
+        // Create default accounts
         const facultyCount = await Faculty.countDocuments();
         if (facultyCount === 0) {
             await Faculty.insertMany([
@@ -722,33 +754,26 @@ async function startServer() {
             console.log('✅ Default faculty accounts created');
         }
 
-        // Ensure uploads directory exists
+        // Ensure uploads directory
         const uploadsDir = path.join(__dirname, 'uploads');
         if (!fs.existsSync(uploadsDir)) {
             fs.mkdirSync(uploadsDir, { recursive: true });
-
-            // Create .gitkeep file
-            fs.writeFileSync(path.join(uploadsDir, '.gitkeep'), '');
         }
 
         app.listen(PORT, () => {
-            console.log(`🚀 Christ University Internship Portal`);
-            console.log(`🌐 Server running on port ${PORT}`);
-            console.log(`📊 Database: IWP_Team11 (MongoDB Atlas)`);
+            console.log('\n🚀 Christ University Internship Portal');
+            console.log(`🌐 Server: http://localhost:${PORT}`);
+            console.log(`📊 Database: Connected to MongoDB Atlas`);
             console.log(`🔒 Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log('\n📄 Available endpoints:');
-            console.log(' - Main page: /');
-            console.log(' - Student login: /student');
-            console.log(' - Student registration: /student-register');
-            console.log(' - Faculty login: /faculty');
-            console.log(' - Teacher registration: /teacher-register');
-            console.log(' - Internship details: /internship-details (protected)');
-            console.log(' - Internship report: /internship-report (protected)');
-            console.log(' - Student dashboard: /student-dashboard (protected)');
-            console.log(' - Teacher dashboard: /teacher-dashboard (protected)');
+            console.log(`🍪 Session store: MongoDB`);
+            console.log('\n📄 Protected Routes:');
+            console.log('  - /student-dashboard (requires student login)');
+            console.log('  - /internship-details (requires student login)');
+            console.log('  - /internship-report (requires student login)');
+            console.log('  - /teacher-dashboard (requires faculty login)');
         });
     } catch (error) {
-        console.error('❌ Failed to start server:', error);
+        console.error('❌ Server startup failed:', error);
         process.exit(1);
     }
 }
@@ -757,14 +782,12 @@ async function startServer() {
 process.on('SIGINT', async () => {
     console.log('\n🛑 Shutting down gracefully...');
     await mongoose.connection.close();
-    console.log('📤 MongoDB Atlas connection closed');
     process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
     console.log('\n🛑 Shutting down gracefully...');
     await mongoose.connection.close();
-    console.log('📤 MongoDB Atlas connection closed');
     process.exit(0);
 });
 

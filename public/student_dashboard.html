@@ -9,35 +9,38 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
-            font-size: 1.5rem;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
 
         .header .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            text-align: right;
         }
 
         .logout-btn {
@@ -47,6 +50,7 @@
             padding: 0.5rem 1rem;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 0.5rem;
             transition: all 0.3s ease;
         }
 
@@ -54,129 +58,134 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .welcome-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .welcome-card h2 {
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-card p {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-
-        .status-cards {
+        .dashboard-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
 
-        .status-card {
+        .card {
             background: white;
-            border-radius: 15px;
+            border-radius: 10px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
 
-        .status-card:hover {
+        .card:hover {
             transform: translateY(-5px);
         }
 
-        .status-card .icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .status-card.internship .icon {
-            background: #667eea;
-        }
-
-        .status-card.report .icon {
-            background: #764ba2;
-        }
-
-        .status-card h3 {
+        .card h3 {
             color: #333;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
         }
 
-        .status-card .status {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .card p {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .status-badge {
             display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
             margin-bottom: 1rem;
         }
 
-        .status.completed {
+        .status-completed {
             background: #d4edda;
             color: #155724;
         }
 
-        .status.pending {
+        .status-pending {
             background: #fff3cd;
             color: #856404;
         }
 
-        .status.not-started {
+        .status-not-started {
             background: #f8d7da;
             color: #721c24;
         }
 
-        .action-btn {
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            text-decoration: none;
+            border-radius: 5px;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s ease;
             font-size: 0.9rem;
             font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
         }
 
-        .action-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .action-btn.secondary {
+        .btn-secondary {
             background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .profile-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-value {
+            color: #333;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
         }
 
         .details-section {
             background: white;
-            border-radius: 15px;
+            border-radius: 10px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .details-section h3 {
@@ -195,13 +204,12 @@
         .detail-item {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
         }
 
         .detail-label {
             font-weight: 600;
             color: #555;
-            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
         }
 
         .detail-value {
@@ -210,6 +218,24 @@
             background: #f8f9fa;
             border-radius: 5px;
             border-left: 3px solid #667eea;
+        }
+
+        .file-info {
+            background: #e8f4fd;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            margin-top: 1rem;
+        }
+
+        .file-info .file-name {
+            font-weight: 500;
+            color: #007bff;
+        }
+
+        .file-info .file-date {
+            font-size: 0.8rem;
+            color: #666;
         }
 
         .loading {
@@ -233,80 +259,97 @@
             100% { transform: rotate(360deg); }
         }
 
-        .hidden {
-            display: none;
-        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
 
-        .file-info {
-            background: #e8f4fd;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #007bff;
-            margin-top: 0.5rem;
-        }
+            .header .user-info {
+                text-align: center;
+                margin-top: 1rem;
+            }
 
-        .file-info .file-name {
-            font-weight: 500;
-            color: #007bff;
-        }
-
-        .file-info .file-date {
-            font-size: 0.8rem;
-            color: #666;
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🎓 Student Dashboard</h1>
-        <div class="user-info">
-            <span id="studentName">Loading...</span>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p>Welcome back, <span id="studentName">Loading...</span></p>
+            </div>
+            <div class="user-info">
+                <div>Logged in as: <strong id="userName">Loading...</strong></div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
         </div>
-    </div>
 
-    <div class="main-content">
-        <div class="welcome-card">
-            <h2>Welcome back, <span id="welcomeName">Student</span>! 👋</h2>
-            <p>Track your internship progress and manage your submissions here.</p>
-            <div class="details-grid">
-                <div class="detail-item">
-                    <span class="detail-label">Register Number:</span>
-                    <span class="detail-value" id="registerNumber">-</span>
+        <!-- Profile Section -->
+        <div class="profile-section" style="display: none;" id="profileSection">
+            <h2>Your Profile</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <span class="profile-label">Register Number:</span>
+                    <span class="profile-value" id="registerNumber">-</span>
                 </div>
-                <div class="detail-item">
-                    <span class="detail-label">Department:</span>
-                    <span class="detail-value" id="department">-</span>
+                <div class="profile-item">
+                    <span class="profile-label">Department:</span>
+                    <span class="profile-value" id="department">-</span>
                 </div>
-                <div class="detail-item">
-                    <span class="detail-label">Email:</span>
-                    <span class="detail-value" id="email">-</span>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value" id="email">-</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Phone:</span>
+                    <span class="profile-value" id="phone">-</span>
                 </div>
             </div>
         </div>
 
-        <div class="status-cards">
-            <div class="status-card internship">
-                <div class="icon">🏢</div>
-                <h3>Internship Details</h3>
-                <div class="status" id="internshipStatus">Checking...</div>
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <!-- Internship Details Card -->
+            <div class="card">
+                <h3>📋 Internship Details</h3>
+                <div class="status-badge" id="internshipStatus">Checking...</div>
                 <p id="internshipInfo">Loading internship information...</p>
-                <button class="action-btn" id="internshipBtn" onclick="handleInternshipAction()">
+                <button class="btn" id="internshipBtn" onclick="handleInternshipAction()">
                     Submit Details
                 </button>
             </div>
 
-            <div class="status-card report">
-                <div class="icon">📄</div>
-                <h3>Internship Report</h3>
-                <div class="status" id="reportStatus">Checking...</div>
+            <!-- Internship Report Card -->
+            <div class="card">
+                <h3>📄 Internship Report</h3>
+                <div class="status-badge" id="reportStatus">Checking...</div>
                 <p id="reportInfo">Loading report information...</p>
-                <button class="action-btn" id="reportBtn" onclick="handleReportAction()">
+                <button class="btn" id="reportBtn" onclick="handleReportAction()">
                     Submit Report
                 </button>
             </div>
+
+            <!-- Quick Actions Card -->
+            <div class="card">
+                <h3>🚀 Quick Actions</h3>
+                <p>Access your most common tasks quickly.</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
+                    <button class="btn btn-secondary" onclick="window.location.href='/internship-details'">
+                        Update Details
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/internship-report'">
+                        Submit Report
+                    </button>
+                </div>
+            </div>
         </div>
 
+        <!-- Internship Details Section (Hidden by default) -->
         <div class="details-section" id="internshipDetailsSection" style="display: none;">
             <h3>📋 Your Internship Details</h3>
             <div id="internshipDetailsContent">
@@ -317,6 +360,7 @@
             </div>
         </div>
 
+        <!-- Report Details Section (Hidden by default) -->
         <div class="details-section" id="reportDetailsSection" style="display: none;">
             <h3>📄 Your Internship Report</h3>
             <div id="reportDetailsContent">
@@ -358,7 +402,7 @@
 
                 userData = data.user;
                 document.getElementById('studentName').textContent = userData.name;
-                document.getElementById('welcomeName').textContent = userData.name;
+                document.getElementById('userName').textContent = userData.name;
             } catch (error) {
                 throw error;
             }
@@ -374,6 +418,10 @@
                     document.getElementById('registerNumber').textContent = profile.registerNumber;
                     document.getElementById('department').textContent = profile.department;
                     document.getElementById('email').textContent = profile.email;
+                    document.getElementById('phone').textContent = profile.phone || 'Not provided';
+
+                    // Show profile section
+                    document.getElementById('profileSection').style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error loading profile:', error);
@@ -392,18 +440,19 @@
                 if (data.success && data.hasDetails) {
                     internshipData = data.details;
                     statusElement.textContent = 'Completed';
-                    statusElement.className = 'status completed';
+                    statusElement.className = 'status-badge status-completed';
                     infoElement.textContent = `Submitted on ${new Date(internshipData.submittedAt).toLocaleDateString()}`;
                     btnElement.textContent = 'Update Details';
-                    btnElement.className = 'action-btn secondary';
+                    btnElement.className = 'btn btn-secondary';
 
                     // Show details section
                     displayInternshipDetails(internshipData);
                 } else {
                     statusElement.textContent = 'Not Started';
-                    statusElement.className = 'status not-started';
+                    statusElement.className = 'status-badge status-not-started';
                     infoElement.textContent = 'Please submit your internship details to get started.';
                     btnElement.textContent = 'Submit Details';
+                    btnElement.className = 'btn';
                 }
             } catch (error) {
                 console.error('Error loading internship status:', error);
@@ -424,25 +473,26 @@
                 if (data.success && data.hasReport) {
                     reportData = data.report;
                     statusElement.textContent = 'Completed';
-                    statusElement.className = 'status completed';
+                    statusElement.className = 'status-badge status-completed';
                     infoElement.textContent = `Submitted on ${new Date(reportData.submittedAt).toLocaleDateString()}`;
                     btnElement.textContent = 'Update Report';
-                    btnElement.className = 'action-btn secondary';
+                    btnElement.className = 'btn btn-secondary';
 
                     // Show details section
                     displayReportDetails(reportData);
                 } else if (!internshipData) {
                     statusElement.textContent = 'Pending';
-                    statusElement.className = 'status pending';
+                    statusElement.className = 'status-badge status-pending';
                     infoElement.textContent = 'Complete internship details first.';
                     btnElement.textContent = 'Submit Report';
                     btnElement.disabled = true;
-                    btnElement.className = 'action-btn secondary';
+                    btnElement.className = 'btn btn-secondary';
                 } else {
                     statusElement.textContent = 'Not Started';
-                    statusElement.className = 'status not-started';
+                    statusElement.className = 'status-badge status-not-started';
                     infoElement.textContent = 'Submit your internship report after completion.';
                     btnElement.textContent = 'Submit Report';
+                    btnElement.className = 'btn';
                 }
             } catch (error) {
                 console.error('Error loading report status:', error);
