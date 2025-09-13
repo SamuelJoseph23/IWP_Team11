@@ -1,1240 +1,589 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard - Christ University</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --primary: #1E3A8A;
-      --secondary: #F1F5F9;
-      --accent: #60A5FA;
-      --success: #10B981;
-      --warning: #FBBF24;
-      --text-primary: #1F2937;
-      --text-secondary: #6B7280;
-      --background: #FFFFFF;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: 
-        linear-gradient(rgba(30, 58, 138, 0.7), rgba(37, 99, 235, 0.7)),
-        url('background.jpg') center/cover no-repeat fixed;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      color: var(--text-primary);
-    }
-
-    /* Header Section */
-    .header {
-      background: var(--background);
-      padding: 20px 32px;
-      border-bottom: 1px solid #E5E7EB;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .header-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1200px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    .logo-link {
-      display: block;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .logo-link:hover {
-      transform: scale(1.05);
-    }
-
-    .logo {
-      height: 50px;
-      width: auto;
-    }
-
-    .university-info {
-      color: var(--primary);
-      text-align: center;
-      flex: 1;
-    }
-
-    .university-name {
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 4px;
-      letter-spacing: 0.5px;
-    }
-
-    .portal-subtitle {
-      font-size: 14px;
-      opacity: 0.8;
-      font-weight: 500;
-      letter-spacing: 0.25px;
-      color: var(--text-secondary);
-    }
-
-    .logout-icon {
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 6px;
-      transition: all 0.3s ease;
-      color: var(--text-secondary);
-    }
-
-    .logout-icon:hover {
-      background: var(--secondary);
-      color: var(--primary);
-      transform: translateX(-3px);
-    }
-
-    .logout-icon svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    /* Main Content */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .dashboard-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--background);
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .top-row, .middle-row, .bottom-row {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 1200px;
-      margin-bottom: 20px;
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--background);
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 
-        0px 20px 25px -5px rgba(0, 0, 0, 0.1),
-        0px 10px 10px -5px rgba(0, 0, 0, 0.04);
-      box-sizing: border-box;
-      flex: 1;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 
-        0px 25px 30px -5px rgba(0, 0, 0, 0.15),
-        0px 15px 15px -5px rgba(0, 0, 0, 0.06);
-    }
-
-    .profile-card {
-      text-align: center;
-      min-width: 250px;
-    }
-
-    .tracker-card {
-      min-width: 300px;
-    }
-
-    .chart-card {
-      min-width: 250px;
-    }
-
-    .profile-img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 32px;
-      margin: 0 auto 15px;
-      color: white;
-      box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
-    }
-
-    .profile-name {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 4px;
-    }
-
-    .profile-register {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      font-family: 'Courier New', monospace;
-      background: var(--secondary);
-      padding: 4px 8px;
-      border-radius: 4px;
-      display: inline-block;
-    }
-
-    .profile-details {
-      margin-top: 12px;
-      text-align: left;
-    }
-
-    .profile-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--secondary);
-      font-size: 12px;
-    }
-
-    .profile-item:last-child {
-      border-bottom: none;
-    }
-
-    .profile-label {
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .profile-value {
-      font-weight: 400;
-      color: var(--text-primary);
-      text-align: right;
-    }
-
-    .card h2 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 15px 0;
-      color: var(--primary);
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .tracker {
-      margin-top: 20px;
-    }
-
-    .module {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 16px;
-      border-radius: 8px;
-      background: var(--secondary);
-      margin-top: 12px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-      cursor: pointer;
-    }
-
-    .module:hover {
-      transform: translateX(5px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .module.Pending {
-      border-left-color: var(--warning);
-      background: linear-gradient(135deg, #FEF3C7, var(--secondary));
-    }
-
-    .module.Submitted {
-      border-left-color: var(--success);
-      background: linear-gradient(135deg, #D1FAE5, var(--secondary));
-    }
-
-    .module.Completed {
-      border-left-color: var(--primary);
-      background: linear-gradient(135deg, #DBEAFE, var(--secondary));
-    }
-
-    /* Internship Details Section */
-    .internship-details {
-      margin-top: 15px;
-      padding: 16px;
-      background: linear-gradient(135deg, #EBF8FF, var(--secondary));
-      border-radius: 8px;
-      border-left: 4px solid var(--accent);
-    }
-
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(96, 165, 250, 0.1);
-      font-size: 12px;
-    }
-
-    .detail-item:last-child {
-      border-bottom: none;
-    }
-
-    .detail-label {
-      font-weight: 500;
-      color: var(--primary);
-    }
-
-    .detail-value {
-      font-weight: 400;
-      color: var(--text-primary);
-      text-align: right;
-      max-width: 60%;
-      word-break: break-word;
-    }
-
-    .no-internship-message {
-      text-align: center;
-      color: var(--text-secondary);
-      font-style: italic;
-      margin-top: 15px;
-      padding: 20px;
-      background: var(--secondary);
-      border-radius: 8px;
-    }
-
-    .edit-details-btn {
-      background: linear-gradient(135deg, var(--accent), #3B82F6);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 16px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    .edit-details-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
-    }
-
-    /* Department formatting */
-    .department-display {
-      text-transform: capitalize;
-    }
-    
-    .log-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #E5E7EB;
-      transition: all 0.3s ease;
-    }
-
-    .log-item:hover {
-      background: var(--secondary);
-      margin: 0 -12px;
-      padding: 12px;
-      border-radius: 6px;
-      border-bottom: 1px solid transparent;
-    }
-
-    .log-item:last-child {
-      border-bottom: none;
-    }
-
-    .log-date {
-      font-weight: 600;
-      color: var(--primary);
-    }
-
-    /* Goal items */
-    .goal-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      margin: 8px 0;
-      background: var(--secondary);
-      border-radius: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .goal-item:hover {
-      background: #E2E8F0;
-    }
-
-    .goal-text {
-      flex: 1;
-      margin-right: 10px;
-    }
-
-    .goal-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-small {
-      padding: 4px 8px;
-      font-size: 12px;
-      border-radius: 4px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-complete {
-      background: var(--success);
-      color: white;
-    }
-
-    .btn-complete:hover {
-      background: #059669;
-    }
-
-    .btn-delete {
-      background: #EF4444;
-      color: white;
-    }
-
-    .btn-delete:hover {
-      background: #DC2626;
-    }
-
-    .goal-completed {
-      opacity: 0.6;
-      text-decoration: line-through;
-    }
-
-    /* Form Styles */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 2px solid #E5E7EB;
-      box-sizing: border-box;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-    }
-
-    button {
-      background: linear-gradient(135deg, var(--primary), #1E40AF);
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .modal {
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background-color: var(--background);
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 20px 25px rgba(0,0,0,0.3);
-      max-width: 400px;
-      width: 90%;
-    }
-
-    .modal-close {
-      float: right;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: color 0.3s ease;
-    }
-
-    .modal-close:hover {
-      color: var(--primary);
-    }
-
-    /* Footer Info */
-    .footer-info {
-      background: var(--background);
-      padding: 16px 32px;
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 12px;
-      border-top: 1px solid #E5E7EB;
-      box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .header {
-        padding: 16px 20px;
-      }
-
-      .header-content {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .university-info {
-        order: -1;
-      }
-
-      .top-row, .middle-row, .bottom-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .profile-card, .tracker-card, .chart-card, .log-section, .form-card, .weekly-goals-card {
-        width: 100%;
-        min-width: auto;
-        margin-bottom: 20px;
-      }
-
-      .dashboard-title {
-        font-size: 24px;
-      }
-
-      .profile-details {
-        text-align: center;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Christ University Internship Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-card h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .status-card.internship .icon {
+            background: #667eea;
+        }
+
+        .status-card.report .icon {
+            background: #764ba2;
+        }
+
+        .status-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-card .status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.not-started {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: #6c757d;
+        }
+
+        .details-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .details-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: #333;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .file-info {
+            background: #e8f4fd;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            margin-top: 0.5rem;
+        }
+
+        .file-info .file-name {
+            font-weight: 500;
+            color: #007bff;
+        }
+
+        .file-info .file-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-  <!-- Header with Logo -->
-  <header class="header">
-    <div class="header-content">
-      <a href="/" class="logo-link">
-        <img src="logo.png" alt="Christ University Logo" class="logo">
-      </a>
-      <div class="university-info">
-        <div class="university-name">Christ University</div>
-        <div class="portal-subtitle">Internship Management Portal</div>
-      </div>
-      <div class="logout-icon" id="logout-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" x2="9" y1="12" y2="12"/>
-        </svg>
-      </div>
-    </div>
-  </header>
-
-  <div class="main">
-    <h1 class="dashboard-title">Student Dashboard</h1>
-    
-    <div class="top-row">
-      <!-- Student Profile Card -->
-      <div class="card profile-card">
-        <div class="profile-img">👩‍💻</div>
-        <div id="student-profile">
-          <div class="profile-name" id="student-name">Loading...</div>
-          <div class="profile-register" id="register-number">Loading...</div>
-          
-          <div class="profile-details" id="profile-details">
-            <!-- Profile details will be loaded here -->
-          </div>
+    <div class="header">
+        <h1>🎓 Student Dashboard</h1>
+        <div class="user-info">
+            <span id="studentName">Loading...</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-      </div>
-
-      <!-- Learning Objectives & Tracker Card -->
-      <div class="card tracker-card">
-        <div>
-          <h2>Learning Objectives</h2>
-          <p id="learning-objectives" style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
-            Gain practical knowledge in debugging, test driven development (TDD) and agile methodologies.
-          </p>
-        </div>
-        <div class="tracker">
-          <h2>Progress Tracker</h2>
-          <div id="progress-container">
-            <!-- Progress modules will be rendered here -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Internship Details Card -->
-      <div class="card chart-card">
-        <h2>Internship Details</h2>
-        <div id="internship-details-container">
-          <!-- Internship details will be loaded here -->
-        </div>
-      </div>
-    </div>
-    
-    <div class="middle-row">
-      <!-- Weekly Goals Section -->
-      <div class="card weekly-goals-card">
-        <h2>Weekly Goals</h2>
-        <form id="addGoalForm">
-          <textarea id="goalEntry" rows="2" placeholder="e.g., Complete Unit 3 of Python course." required></textarea>
-          <button type="submit">Add Goal</button>
-        </form>
-        <div id="goals-container" style="margin-top: 15px;">
-          <!-- Goals will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Radar Chart Card -->
-      <div class="card chart-card">
-        <h2>Skill Development Matrix</h2>
-        <canvas id="radarChart" width="250" height="250"></canvas>
-      </div>
     </div>
 
-    <div class="bottom-row">
-      <!-- Reflection and Logs Section -->
-      <div class="card log-section">
-        <h2>Reflection and Logs</h2>
-        <div id="logs-container">
-          <!-- Logs will be rendered here -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h2>Welcome back, <span id="welcomeName">Student</span>! 👋</h2>
+            <p>Track your internship progress and manage your submissions here.</p>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Register Number:</span>
+                    <span class="detail-value" id="registerNumber">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Department:</span>
+                    <span class="detail-value" id="department">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value" id="email">-</span>
+                </div>
+            </div>
         </div>
-      </div>
-      
-      <!-- Forms to add logs and update skills -->
-      <div class="card form-card">
-        <h2>Quick Actions</h2>
-        <form id="addLogForm">
-          <input type="date" id="logDate" required>
-          <textarea id="logEntry" rows="4" placeholder="Your reflection or log entry here..." required></textarea>
-          <button type="submit">Add Log</button>
-        </form>
-        
-        <h2 style="margin-top: 25px;">Update Skills</h2>
-        <form id="updateSkillsForm">
-          <div id="skill-inputs">
-            <!-- Skill inputs will be dynamically generated here -->
-          </div>
-          <button type="submit">Update Skills</button>
-        </form>
-      </div>
+
+        <div class="status-cards">
+            <div class="status-card internship">
+                <div class="icon">🏢</div>
+                <h3>Internship Details</h3>
+                <div class="status" id="internshipStatus">Checking...</div>
+                <p id="internshipInfo">Loading internship information...</p>
+                <button class="action-btn" id="internshipBtn" onclick="handleInternshipAction()">
+                    Submit Details
+                </button>
+            </div>
+
+            <div class="status-card report">
+                <div class="icon">📄</div>
+                <h3>Internship Report</h3>
+                <div class="status" id="reportStatus">Checking...</div>
+                <p id="reportInfo">Loading report information...</p>
+                <button class="action-btn" id="reportBtn" onclick="handleReportAction()">
+                    Submit Report
+                </button>
+            </div>
+        </div>
+
+        <div class="details-section" id="internshipDetailsSection" style="display: none;">
+            <h3>📋 Your Internship Details</h3>
+            <div id="internshipDetailsContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading internship details...
+                </div>
+            </div>
+        </div>
+
+        <div class="details-section" id="reportDetailsSection" style="display: none;">
+            <h3>📄 Your Internship Report</h3>
+            <div id="reportDetailsContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading report details...
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <footer class="footer-info">
-    <div>© 2025 Christ University Internship Portal | Secure Access | Academic Excellence</div>
-  </footer>
+    <script>
+        let userData = null;
+        let internshipData = null;
+        let reportData = null;
 
-  <!-- Modal for custom message box -->
-  <div id="message-modal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" id="modal-close-button">&times;</span>
-      <p id="modal-message"></p>
-    </div>
-  </div>
-
-  <script>
-    // Global variables
-    let radarChart = null;
-    let internshipDetails = null;
-    let studentProfile = null;
-    
-    // Data store - UPDATED: Starting with empty values for fresh user experience
-    const dataStore = {
-      progressModules: [
-        { id: 1, name: 'Module 1: Introduction to Web Development', status: 'Pending' },
-        { id: 2, name: 'Module 2: Database Management', status: 'Pending' },
-        { id: 3, name: 'Module 3: API Development', status: 'Pending' },
-        { id: 4, name: 'Module 4: Testing & Deployment', status: 'Pending' }
-      ],
-      skillMatrix: {
-        labels: ['Agile', 'Communication', 'Action', 'Python', 'Debugging'],
-        data: [0, 0, 0, 0, 0] // Start with all skills at 0
-      },
-      logs: [], // Start with empty logs array
-      goals: [] // Start with empty goals array
-    };
-
-    // Utility functions
-    function showMessageBox(message) {
-      const modal = document.getElementById('message-modal');
-      document.getElementById('modal-message').textContent = message;
-      modal.style.display = 'flex';
-    }
-
-    function hideMessageBox() {
-      document.getElementById('message-modal').style.display = 'none';
-    }
-
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      });
-    }
-
-    function generateId() {
-      return Date.now() + Math.random();
-    }
-
-    function formatDepartment(department) {
-      const departmentNames = {
-        'computer-science': 'Computer Science Engineering',
-        'information-technology': 'Information Technology',
-        'electronics': 'Electronics & Communication',
-        'mechanical': 'Mechanical Engineering',
-        'civil': 'Civil Engineering',
-        'business': 'Business Administration',
-        'commerce': 'Commerce',
-        'other': 'Other'
-      };
-      return departmentNames[department] || department;
-    }
-
-    // Load student profile from server - FIXED VERSION
-    async function loadStudentProfile() {
-      const registerNumber = sessionStorage.getItem('registerNumber');
-      console.log('Loading profile for register number:', registerNumber);
-      
-      if (!registerNumber) {
-        console.error('No register number found in session');
-        window.location.href = '/student';
-        return;
-      }
-
-      try {
-        console.log('Making API call to:', `/api/student-profile/${registerNumber}`);
-        const response = await fetch(`/api/student-profile/${encodeURIComponent(registerNumber)}`);
-        
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Received profile data:', data);
-        
-        if (data.success && data.profile) {
-          studentProfile = data.profile;
-          renderStudentProfile(data.profile);
-        } else {
-          console.error('Profile data invalid:', data);
-          // Fallback to session data
-          renderFallbackProfile(registerNumber);
-        }
-      } catch (error) {
-        console.error('Error loading student profile:', error);
-        // Fallback to session data
-        renderFallbackProfile(registerNumber);
-      }
-    }
-
-    // Fallback function if API fails
-    function renderFallbackProfile(registerNumber) {
-      const fallbackProfile = {
-        name: 'Student User',
-        registerNumber: registerNumber,
-        email: registerNumber + '@christuniversity.in',
-        department: 'computer-science',
-        phone: 'Not provided',
-        createdAt: new Date().toISOString()
-      };
-      renderStudentProfile(fallbackProfile);
-    }
-
-    // Render student profile - FIXED VERSION
-    function renderStudentProfile(profile) {
-      console.log('Rendering profile:', profile);
-      
-      // Update the main profile display
-      const nameElement = document.getElementById('student-name');
-      const registerElement = document.getElementById('register-number');
-      
-      if (nameElement) {
-        nameElement.textContent = profile.name || 'Unknown Student';
-      }
-      
-      if (registerElement) {
-        registerElement.textContent = profile.registerNumber || 'Unknown ID';
-      }
-      
-      // Update detailed profile information
-      const profileDetails = document.getElementById('profile-details');
-      if (profileDetails) {
-        profileDetails.innerHTML = `
-          <div class="profile-item">
-            <span class="profile-label">Email:</span>
-            <span class="profile-value">${profile.email || 'Not provided'}</span>
-          </div>
-          <div class="profile-item">
-            <span class="profile-label">Department:</span>
-            <span class="profile-value department-display">${formatDepartment(profile.department) || 'Not specified'}</span>
-          </div>
-          <div class="profile-item">
-            <span class="profile-label">Phone:</span>
-            <span class="profile-value">${profile.phone || 'Not provided'}</span>
-          </div>
-          <div class="profile-item">
-            <span class="profile-label">Joined:</span>
-            <span class="profile-value">${profile.createdAt ? formatDate(profile.createdAt) : 'Unknown'}</span>
-          </div>
-        `;
-      }
-    }
-
-    // Load internship details from server - FIXED VERSION
-    async function loadInternshipDetails() {
-      const registerNumber = sessionStorage.getItem('registerNumber');
-      if (!registerNumber) return;
-
-      try {
-        console.log('Loading internship details for:', registerNumber);
-        const response = await fetch(`/api/internship-details/${encodeURIComponent(registerNumber)}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Internship details response:', data);
-        
-        if (data.hasDetails) {
-          internshipDetails = data.details;
-          renderInternshipDetails(data.details);
-          
-          // Update learning objectives if provided
-          if (data.details.learningObjectives) {
-            document.getElementById('learning-objectives').textContent = data.details.learningObjectives;
-          }
-        } else {
-          renderNoInternshipDetails();
-        }
-      } catch (error) {
-        console.error('Error loading internship details:', error);
-        renderNoInternshipDetails();
-      }
-    }
-
-    // Render internship details
-    function renderInternshipDetails(details) {
-      const container = document.getElementById('internship-details-container');
-      
-      const internshipType = details.internshipType === 'offcampus' ? 'Off Campus' : 'On Campus';
-      
-      container.innerHTML = `
-        <div class="internship-details">
-          <div class="detail-item">
-            <span class="detail-label">Type:</span>
-            <span class="detail-value">${internshipType}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Company:</span>
-            <span class="detail-value">${details.companyName || details.universityDepartment || 'N/A'}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Position:</span>
-            <span class="detail-value">${details.jobTitle || details.projectTitle || 'N/A'}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Duration:</span>
-            <span class="detail-value">${details.startDate && details.endDate ? formatDate(details.startDate) + ' - ' + formatDate(details.endDate) : 'N/A'}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Work Mode:</span>
-            <span class="detail-value">${details.workMode || (details.internshipType === 'oncampus' ? 'On Campus' : 'N/A')}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Supervisor:</span>
-            <span class="detail-value">${details.supervisorName || details.mentorName || 'N/A'}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Stipend:</span>
-            <span class="detail-value">${details.stipend ? '₹' + details.stipend : (details.internshipType === 'oncampus' ? 'Academic Credit' : 'Unpaid')}</span>
-          </div>
-          <button class="edit-details-btn" onclick="editInternshipDetails()">
-            Edit Details
-          </button>
-        </div>
-      `;
-    }
-
-    // Render no internship details message
-    function renderNoInternshipDetails() {
-      const container = document.getElementById('internship-details-container');
-      container.innerHTML = `
-        <div class="no-internship-message">
-          <p>No internship details submitted yet.</p>
-          <button class="edit-details-btn" onclick="window.location.href='/internship-details'">
-            Add Details
-          </button>
-        </div>
-      `;
-    }
-
-    // Edit internship details
-    function editInternshipDetails() {
-      if (confirm('Do you want to edit your internship details? This will redirect you to the form.')) {
-        window.location.href = '/internship-details';
-      }
-    }
-
-    // Render functions
-    function renderProgressModules() {
-      const container = document.getElementById('progress-container');
-      container.innerHTML = '';
-      
-      dataStore.progressModules.forEach(module => {
-        const moduleDiv = document.createElement('div');
-        moduleDiv.className = `module ${module.status}`;
-        moduleDiv.innerHTML = `
-          <span style="font-weight: 500;">${module.name}</span>
-          <span style="font-weight: 600; text-transform: uppercase; font-size: 12px;">${module.status}</span>
-        `;
-        
-        // Add click functionality to toggle status
-        moduleDiv.addEventListener('click', () => {
-          const statuses = ['Pending', 'Submitted', 'Completed'];
-          const currentIndex = statuses.indexOf(module.status);
-          const nextIndex = (currentIndex + 1) % statuses.length;
-          module.status = statuses[nextIndex];
-          renderProgressModules();
-          showMessageBox(`${module.name} status updated to ${module.status}`);
+        // Check authentication and load user data on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await checkAuthentication();
+                await loadUserProfile();
+                await loadInternshipStatus();
+                await loadReportStatus();
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                alert('Error loading dashboard. Please try logging in again.');
+                window.location.href = '/student';
+            }
         });
-        
-        container.appendChild(moduleDiv);
-      });
-    }
 
-    function renderRadarChart() {
-      const ctx = document.getElementById('radarChart').getContext('2d');
-      
-      if (radarChart) {
-        radarChart.destroy();
-      }
-      
-      radarChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-          labels: dataStore.skillMatrix.labels,
-          datasets: [{
-            label: 'Skill Levels',
-            data: dataStore.skillMatrix.data,
-            backgroundColor: 'rgba(30, 58, 138, 0.2)',
-            borderColor: '#1E3A8A',
-            pointBackgroundColor: '#1E3A8A',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            borderWidth: 2,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          scales: {
-            r: {
-              min: 0,
-              max: 5,
-              ticks: {
-                stepSize: 1,
-                backdropColor: 'transparent',
-                color: '#6B7280',
-                font: {
-                  size: 10
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/session');
+                const data = await response.json();
+
+                if (!data.success || data.userType !== 'student') {
+                    throw new Error('Not authenticated as student');
                 }
-              },
-              grid: {
-                color: '#E5E7EB'
-              },
-              angleLines: {
-                color: '#E5E7EB'
-              },
-              pointLabels: {
-                font: {
-                  size: 11,
-                  weight: '500'
-                },
-                color: '#1F2937'
-              }
+
+                userData = data.user;
+                document.getElementById('studentName').textContent = userData.name;
+                document.getElementById('welcomeName').textContent = userData.name;
+            } catch (error) {
+                throw error;
             }
-          },
-          plugins: {
-            legend: {
-              display: false
+        }
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/student-profile');
+                const data = await response.json();
+
+                if (data.success) {
+                    const profile = data.profile;
+                    document.getElementById('registerNumber').textContent = profile.registerNumber;
+                    document.getElementById('department').textContent = profile.department;
+                    document.getElementById('email').textContent = profile.email;
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
             }
-          }
         }
-      });
-    }
 
-    function renderSkillInputs() {
-      const container = document.getElementById('skill-inputs');
-      container.innerHTML = '';
-      
-      dataStore.skillMatrix.labels.forEach((label, index) => {
-        const inputGroup = document.createElement('div');
-        inputGroup.style.marginBottom = '12px';
-        inputGroup.innerHTML = `
-          <label style="font-size: 12px; display: block; margin-bottom: 5px; color: var(--text-secondary); font-weight: 500;">
-            ${label} (0-5)
-          </label>
-          <input type="number" id="skill-${index}" min="0" max="5" value="${dataStore.skillMatrix.data[index]}" required>
-        `;
-        container.appendChild(inputGroup);
-      });
-    }
+        async function loadInternshipStatus() {
+            try {
+                const response = await fetch('/api/internship-details');
+                const data = await response.json();
 
-    function renderLogs() {
-      const container = document.getElementById('logs-container');
-      container.innerHTML = '';
-      
-      if (dataStore.logs.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px; font-style: italic;">📝 No reflection logs yet. Start by adding your first entry to track your internship journey!</p>';
-        return;
-      }
-      
-      // Sort logs by date (newest first)
-      const sortedLogs = [...dataStore.logs].sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      sortedLogs.forEach(log => {
-        const logItem = document.createElement('div');
-        logItem.className = 'log-item';
-        logItem.innerHTML = `
-          <p>
-            <span class="log-date">${formatDate(log.date)}:</span> 
-            ${log.entry}
-          </p>
-        `;
-        container.appendChild(logItem);
-      });
-    }
+                const statusElement = document.getElementById('internshipStatus');
+                const infoElement = document.getElementById('internshipInfo');
+                const btnElement = document.getElementById('internshipBtn');
 
-    function renderGoals() {
-      const container = document.getElementById('goals-container');
-      container.innerHTML = '';
-      
-      if (dataStore.goals.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px; font-style: italic;">🎯 No goals set yet. Add your first goal to start tracking your progress!</p>';
-        return;
-      }
-      
-      dataStore.goals.forEach(goal => {
-        const goalItem = document.createElement('div');
-        goalItem.className = `goal-item ${goal.completed ? 'goal-completed' : ''}`;
-        goalItem.innerHTML = `
-          <div class="goal-text">${goal.text}</div>
-          <div class="goal-actions">
-            <button class="btn-small btn-complete" onclick="toggleGoal(${goal.id})" ${goal.completed ? 'style="display:none"' : ''}>
-              ✓ Complete
-            </button>
-            <button class="btn-small btn-delete" onclick="deleteGoal(${goal.id})">
-              ✗ Delete
-            </button>
-          </div>
-        `;
-        container.appendChild(goalItem);
-      });
-    }
+                if (data.success && data.hasDetails) {
+                    internshipData = data.details;
+                    statusElement.textContent = 'Completed';
+                    statusElement.className = 'status completed';
+                    infoElement.textContent = `Submitted on ${new Date(internshipData.submittedAt).toLocaleDateString()}`;
+                    btnElement.textContent = 'Update Details';
+                    btnElement.className = 'action-btn secondary';
 
-    // Goal management functions
-    function toggleGoal(goalId) {
-      const goal = dataStore.goals.find(g => g.id === goalId);
-      if (goal) {
-        goal.completed = !goal.completed;
-        renderGoals();
-        showMessageBox(goal.completed ? 'Goal completed! 🎉' : 'Goal marked as pending');
-      }
-    }
-
-    function deleteGoal(goalId) {
-      if (confirm('Are you sure you want to delete this goal?')) {
-        dataStore.goals = dataStore.goals.filter(g => g.id !== goalId);
-        renderGoals();
-        showMessageBox('Goal deleted successfully');
-      }
-    }
-
-    // Event handlers
-    function setupEventListeners() {
-      // Add Goal Form
-      document.getElementById('addGoalForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const goalText = document.getElementById('goalEntry').value.trim();
-        
-        if (goalText) {
-          const newGoal = {
-            id: generateId(),
-            text: goalText,
-            completed: false
-          };
-          
-          dataStore.goals.unshift(newGoal);
-          renderGoals();
-          showMessageBox('Goal added successfully!');
-          document.getElementById('goalEntry').value = '';
+                    // Show details section
+                    displayInternshipDetails(internshipData);
+                } else {
+                    statusElement.textContent = 'Not Started';
+                    statusElement.className = 'status not-started';
+                    infoElement.textContent = 'Please submit your internship details to get started.';
+                    btnElement.textContent = 'Submit Details';
+                }
+            } catch (error) {
+                console.error('Error loading internship status:', error);
+                document.getElementById('internshipStatus').textContent = 'Error';
+                document.getElementById('internshipInfo').textContent = 'Failed to load status';
+            }
         }
-      });
 
-      // Add Log Form
-      document.getElementById('addLogForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const date = document.getElementById('logDate').value;
-        const entry = document.getElementById('logEntry').value.trim();
-        
-        if (date && entry) {
-          const newLog = { date, entry };
-          dataStore.logs.unshift(newLog);
-          renderLogs();
-          showMessageBox('Log entry added successfully!');
-          document.getElementById('logDate').value = '';
-          document.getElementById('logEntry').value = '';
+        async function loadReportStatus() {
+            try {
+                const response = await fetch('/api/internship-report');
+                const data = await response.json();
+
+                const statusElement = document.getElementById('reportStatus');
+                const infoElement = document.getElementById('reportInfo');
+                const btnElement = document.getElementById('reportBtn');
+
+                if (data.success && data.hasReport) {
+                    reportData = data.report;
+                    statusElement.textContent = 'Completed';
+                    statusElement.className = 'status completed';
+                    infoElement.textContent = `Submitted on ${new Date(reportData.submittedAt).toLocaleDateString()}`;
+                    btnElement.textContent = 'Update Report';
+                    btnElement.className = 'action-btn secondary';
+
+                    // Show details section
+                    displayReportDetails(reportData);
+                } else if (!internshipData) {
+                    statusElement.textContent = 'Pending';
+                    statusElement.className = 'status pending';
+                    infoElement.textContent = 'Complete internship details first.';
+                    btnElement.textContent = 'Submit Report';
+                    btnElement.disabled = true;
+                    btnElement.className = 'action-btn secondary';
+                } else {
+                    statusElement.textContent = 'Not Started';
+                    statusElement.className = 'status not-started';
+                    infoElement.textContent = 'Submit your internship report after completion.';
+                    btnElement.textContent = 'Submit Report';
+                }
+            } catch (error) {
+                console.error('Error loading report status:', error);
+                document.getElementById('reportStatus').textContent = 'Error';
+                document.getElementById('reportInfo').textContent = 'Failed to load status';
+            }
         }
-      });
 
-      // Update Skills Form
-      document.getElementById('updateSkillsForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        dataStore.skillMatrix.data = dataStore.skillMatrix.labels.map((_, index) => {
-          const value = parseInt(document.getElementById(`skill-${index}`).value) || 0;
-          return Math.max(0, Math.min(5, value)); // Ensure value is between 0-5
-        });
-        
-        renderRadarChart();
-        showMessageBox('Skills updated successfully!');
-      });
+        function displayInternshipDetails(details) {
+            const section = document.getElementById('internshipDetailsSection');
+            const content = document.getElementById('internshipDetailsContent');
 
-      // Logout functionality
-      document.getElementById('logout-icon').addEventListener('click', () => {
-        if (confirm('Are you sure you want to logout?')) {
-          sessionStorage.removeItem('registerNumber');
-          window.location.href = '/';
+            let html = '<div class="details-grid">';
+
+            // Basic details
+            html += createDetailItem('Internship Type', details.internshipType || '-');
+            html += createDetailItem('Student Name', details.studentName || '-');
+            html += createDetailItem('Department', details.department || '-');
+
+            if (details.internshipType === 'offcampus') {
+                html += createDetailItem('Company Name', details.companyName || '-');
+                html += createDetailItem('Company Type', details.companyType || '-');
+                html += createDetailItem('Job Title', details.jobTitle || '-');
+                html += createDetailItem('Work Mode', details.workMode || '-');
+                html += createDetailItem('Stipend', details.stipend || '-');
+                html += createDetailItem('Supervisor Name', details.supervisorName || '-');
+                html += createDetailItem('Supervisor Email', details.supervisorEmail || '-');
+            } else if (details.internshipType === 'oncampus') {
+                html += createDetailItem('University Department', details.universityDepartment || '-');
+                html += createDetailItem('Project Title', details.projectTitle || '-');
+                html += createDetailItem('Duration', details.internshipDuration + ' weeks' || '-');
+                html += createDetailItem('Mentor Name', details.mentorName || '-');
+                html += createDetailItem('Mentor Email', details.mentorEmail || '-');
+            }
+
+            // Start and end dates
+            if (details.startDate && details.startDate.length > 0) {
+                const startDate = details.startDate.find(date => date) || '-';
+                html += createDetailItem('Start Date', startDate);
+            }
+            if (details.endDate && details.endDate.length > 0) {
+                const endDate = details.endDate.find(date => date) || '-';
+                html += createDetailItem('End Date', endDate);
+            }
+
+            html += '</div>';
+
+            // File information
+            if (details.offerLetterOriginalName) {
+                html += `
+                    <div class="file-info">
+                        <div class="file-name">📄 ${details.offerLetterOriginalName}</div>
+                        <div class="file-date">Uploaded: ${new Date(details.submittedAt).toLocaleString()}</div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+            section.style.display = 'block';
         }
-      });
 
-      // Modal close functionality
-      document.getElementById('modal-close-button').addEventListener('click', hideMessageBox);
-      
-      // Close modal when clicking outside
-      window.addEventListener('click', (e) => {
-        const modal = document.getElementById('message-modal');
-        if (e.target === modal) {
-          hideMessageBox();
+        function displayReportDetails(report) {
+            const section = document.getElementById('reportDetailsSection');
+            const content = document.getElementById('reportDetailsContent');
+
+            let html = '<div class="details-grid">';
+            html += createDetailItem('Student Name', report.name || '-');
+            html += createDetailItem('Department', report.department || '-');
+            html += createDetailItem('Internship Type', report.internshipType || '-');
+            html += createDetailItem('Role', report.internshipRole || '-');
+            html += createDetailItem('Start Date', report.startDate ? new Date(report.startDate).toLocaleDateString() : '-');
+            html += createDetailItem('Mentor', report.mentor || '-');
+            html += createDetailItem('Rating', report.rating ? `${report.rating}/10` : '-');
+            html += '</div>';
+
+            if (report.summary) {
+                html += `
+                    <div class="detail-item" style="margin-top: 1rem;">
+                        <span class="detail-label">Summary:</span>
+                        <div class="detail-value">${report.summary}</div>
+                    </div>
+                `;
+            }
+
+            // File information
+            if (report.reportFilename) {
+                html += `
+                    <div class="file-info">
+                        <div class="file-name">📄 Internship Report</div>
+                        <div class="file-date">Uploaded: ${new Date(report.submittedAt).toLocaleString()}</div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+            section.style.display = 'block';
         }
-      });
-    }
 
-    // Initialization function - FIXED VERSION
-    async function initDashboard() {
-      console.log('Initializing dashboard...');
-      
-      // Check authentication
-      const registerNumber = sessionStorage.getItem('registerNumber');
-      if (!registerNumber) {
-        console.log('No register number in session, redirecting to login');
-        window.location.href = '/student';
-        return;
-      }
-      
-      console.log('Authenticated user:', registerNumber);
+        function createDetailItem(label, value) {
+            return `
+                <div class="detail-item">
+                    <span class="detail-label">${label}:</span>
+                    <span class="detail-value">${value}</span>
+                </div>
+            `;
+        }
 
-      // Set today's date as default in log form
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('logDate').value = today;
+        function handleInternshipAction() {
+            window.location.href = '/internship-details';
+        }
 
-      // Load data with proper error handling
-      try {
-        console.log('Loading student profile and internship details...');
-        await Promise.all([
-          loadStudentProfile(),
-          loadInternshipDetails()
-        ]);
-        console.log('Data loading completed');
-      } catch (error) {
-        console.error('Error during data loading:', error);
-      }
+        function handleReportAction() {
+            if (!internshipData) {
+                alert('Please submit your internship details first.');
+                return;
+            }
+            window.location.href = '/internship-report';
+        }
 
-      // Render all components
-      renderProgressModules();
-      renderRadarChart();
-      renderSkillInputs();
-      renderLogs();
-      renderGoals();
-      
-      // Setup event listeners
-      setupEventListeners();
-      
-      console.log('Dashboard initialization completed');
-    }
+        async function logout() {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-    // Handle window resize for chart responsiveness
-    window.addEventListener('resize', () => {
-      if (radarChart) {
-        renderRadarChart();
-      }
-    });
+                const data = await response.json();
 
-    // Make functions globally accessible for inline event handlers
-    window.toggleGoal = toggleGoal;
-    window.deleteGoal = deleteGoal;
-    window.editInternshipDetails = editInternshipDetails;
-
-    // Initialize dashboard when DOM is loaded
-    document.addEventListener('DOMContentLoaded', initDashboard);
-</script>
-
-
+                if (data.success) {
+                    window.location.href = data.redirectUrl || '/';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Force redirect even if logout request fails
+                window.location.href = '/';
+            }
+        }
+    </script>
 </body>
 </html>
