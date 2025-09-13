@@ -3,92 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internship Report - Christ University</title>
+    <title>Internship Report - Christ University Internship Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            color: #333;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            padding: 2rem;
-            text-align: center;
-            position: relative;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3c72;
         }
 
         .back-btn {
-            position: absolute;
-            left: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
         .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
         }
 
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Page Title */
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Form Container */
         .form-container {
-            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1e3c72;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Form Groups */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: #1e3c72;
+            font-size: 14px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+            background: white;
         }
 
         .form-group textarea {
@@ -97,73 +213,73 @@
         }
 
         .readonly-field {
-            background-color: #f8f9fa !important;
+            background: #f8f9fa !important;
             color: #6c757d !important;
             cursor: not-allowed !important;
         }
 
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
-            margin: 2rem 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
+        /* Rating Slider */
         .rating-container {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
+            gap: 15px;
+            margin-top: 10px;
         }
 
         .rating-slider {
             flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: linear-gradient(to right, #ff4757 0%, #ffa502 50%, #2ed573 100%);
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #ff6b6b 0%, #feca57 50%, #48cab2 100%);
             appearance: none;
             outline: none;
+            cursor: pointer;
         }
 
         .rating-slider::-webkit-slider-thumb {
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: #667eea;
+            background: #1e3c72;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            border: 3px solid white;
         }
 
         .rating-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: #667eea;
+            background: #1e3c72;
             cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            border: 3px solid white;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
         }
 
         .rating-display {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #667eea;
-            min-width: 60px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e3c72;
+            min-width: 80px;
+            text-align: center;
+            background: rgba(30, 60, 114, 0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
         }
 
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* File Upload */
         .file-upload {
             position: relative;
-            display: inline-block;
-            width: 100%;
+            margin-top: 8px;
         }
 
         .file-upload input[type="file"] {
@@ -176,128 +292,223 @@
 
         .file-upload-label {
             display: block;
-            padding: 1rem;
-            border: 2px dashed #667eea;
-            border-radius: 8px;
+            padding: 25px;
+            border: 2px dashed #1e3c72;
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: #f8f9ff;
+            background: rgba(30, 60, 114, 0.05);
+            color: #1e3c72;
+            font-weight: 500;
         }
 
         .file-upload-label:hover {
-            background: #f0f2ff;
-            border-color: #5a67d8;
+            background: rgba(30, 60, 114, 0.1);
+            border-color: #2a5298;
+            transform: translateY(-2px);
+        }
+
+        .file-upload-label i {
+            font-size: 32px;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.8;
         }
 
         .file-info {
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: #e8f4fd;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            color: #0066cc;
-        }
-
-        .declaration {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(30, 60, 114, 0.1);
+            border: 1px solid rgba(30, 60, 114, 0.2);
             border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
+            color: #1e3c72;
+            font-size: 14px;
+            display: none;
         }
 
-        .declaration input[type="checkbox"] {
-            width: auto;
-            margin-right: 0.5rem;
+        .file-info i {
+            margin-right: 8px;
+        }
+
+        /* Declaration */
+        .declaration {
+            background: rgba(30, 60, 114, 0.05);
+            border: 2px solid rgba(30, 60, 114, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
         }
 
         .declaration label {
-            font-weight: normal;
-            color: #555;
-            cursor: pointer;
             display: flex;
             align-items: flex-start;
-            gap: 0.5rem;
+            gap: 12px;
+            cursor: pointer;
+            font-weight: normal !important;
+            color: #333 !important;
+            line-height: 1.6;
+        }
+
+        .declaration input[type="checkbox"] {
+            width: auto !important;
+            margin: 0 !important;
+            transform: scale(1.3);
+            accent-color: #1e3c72;
+        }
+
+        /* Submit Button */
+        .submit-container {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            padding: 18px 50px;
+            border-radius: 30px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
             transition: all 0.3s ease;
-            margin-top: 2rem;
+            min-width: 220px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(30, 60, 114, 0.4);
         }
 
         .submit-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
 
-        .loading {
-            text-align: center;
-            padding: 2rem;
+        /* Required Fields Note */
+        .required-note {
+            background: rgba(30, 60, 114, 0.1);
+            border: 1px solid rgba(30, 60, 114, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 30px;
+            color: #1e3c72;
+            font-size: 14px;
         }
 
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+        .required-note i {
+            margin-right: 8px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .grid-2 {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .back-btn {
-                position: static;
-                transform: none;
-                margin-bottom: 1rem;
-                align-self: flex-start;
+            .page-header,
+            .form-container {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .rating-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .rating-display {
+                align-self: center;
             }
         }
+
+        /* File type icons */
+        .file-type-pdf { color: #dc3545; }
+        .file-type-doc { color: #007bff; }
+        .file-type-docx { color: #007bff; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">CU</div>
+                <div class="logo-text">Christ University<br><small style="font-size: 12px; font-weight: normal; color: #666;">Internship Portal</small></div>
+            </div>
             <a href="/student-dashboard" class="back-btn">
-                ← Back to Dashboard
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
             </a>
-            <h1>Internship Report Submission</h1>
-            <p>Submit your completed internship report and feedback</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Internship Report Submission</h1>
+            <p class="page-subtitle">Submit your completed internship report and provide feedback on your experience</p>
         </div>
 
+        <!-- Form Container -->
         <div class="form-container">
-            <div class="loading" id="loadingSection">
+            <!-- Loading State -->
+            <div class="loading-container" id="loadingContainer">
                 <div class="spinner"></div>
-                <p>Loading your information...</p>
+                <h3 style="color: #1e3c72; margin-bottom: 10px;">Loading Your Information</h3>
+                <p style="color: #666;">Please wait while we prepare the report form...</p>
             </div>
 
+            <!-- Form -->
             <form id="reportForm" style="display: none;">
-                <div class="section-title">Basic Information</div>
-                <div class="grid-2">
+                <!-- Required Fields Note -->
+                <div class="required-note">
+                    <i class="fas fa-info-circle"></i>
+                    Fields marked with <strong>*</strong> are required. Please provide accurate information about your internship experience.
+                </div>
+
+                <!-- Basic Information -->
+                <div class="section-title">
+                    <i class="fas fa-user"></i>
+                    Basic Information
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
                         <label for="department">Department</label>
                         <input type="text" id="department" name="department" readonly class="readonly-field">
@@ -308,13 +519,13 @@
                     </div>
                 </div>
 
-                <div class="grid-2">
+                <div class="form-row">
                     <div class="form-group">
                         <label for="registerNumber">Register Number</label>
                         <input type="text" id="registerNumber" name="registerNumber" readonly class="readonly-field">
                     </div>
                     <div class="form-group">
-                        <label for="internshipType">Internship Type</label>
+                        <label for="internshipType">Internship Type *</label>
                         <select id="internshipType" name="internshipType" required>
                             <option value="">Choose Type</option>
                             <option value="Industry Internship">Industry Internship</option>
@@ -324,72 +535,103 @@
                     </div>
                 </div>
 
-                <div class="section-title">Internship Details</div>
-                <div class="grid-2">
+                <!-- Internship Details -->
+                <div class="section-title">
+                    <i class="fas fa-briefcase"></i>
+                    Internship Details
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="internshipRole">Internship Role</label>
+                        <label for="internshipRole">Internship Role *</label>
                         <input type="text" id="internshipRole" name="internshipRole" 
                                placeholder="e.g., Software Developer, Research Assistant" required>
                     </div>
                     <div class="form-group">
-                        <label for="startDate">Internship Start Date</label>
+                        <label for="startDate">Internship Start Date *</label>
                         <input type="date" id="startDate" name="startDate" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="mentor">Internship Mentor</label>
+                    <label for="mentor">Internship Mentor *</label>
                     <input type="text" id="mentor" name="mentor" 
                            placeholder="Name of your supervisor/mentor" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="summary">Internship Summary</label>
+                    <label for="summary">Internship Summary *</label>
                     <textarea id="summary" name="summary" 
-                              placeholder="Provide a detailed summary of your internship experience, tasks completed, skills learned, and overall insights gained..."
+                              placeholder="Provide a detailed summary of your internship experience, tasks completed, skills learned, challenges faced, and overall insights gained during your internship period..."
                               required></textarea>
                 </div>
 
-                <div class="section-title">Experience Rating</div>
+                <!-- Experience Rating -->
+                <div class="section-title">
+                    <i class="fas fa-star"></i>
+                    Experience Rating
+                </div>
+
                 <div class="form-group">
-                    <label for="rating">Rate Your Internship Experience (0-10)</label>
+                    <label for="rating">Rate Your Internship Experience (0-10) *</label>
                     <div class="rating-container">
-                        <span>0</span>
-                        <input type="range" id="rating" name="rating" min="0" max="10" value="5" class="rating-slider">
-                        <span>10</span>
+                        <span style="font-size: 14px; color: #666;">Poor</span>
+                        <input type="range" id="rating" name="rating" min="0" max="10" value="5" class="rating-slider" required>
+                        <span style="font-size: 14px; color: #666;">Excellent</span>
                         <div class="rating-display">
                             <span id="ratingValue">5</span>/10
                         </div>
                     </div>
+                    <div class="rating-labels">
+                        <span>0 - Very Poor</span>
+                        <span>5 - Average</span>
+                        <span>10 - Outstanding</span>
+                    </div>
                 </div>
 
-                <div class="section-title">Report Upload</div>
+                <!-- Report Upload -->
+                <div class="section-title">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Report Upload
+                </div>
+
                 <div class="form-group">
                     <label for="internshipReport">Upload Internship Report *</label>
                     <div class="file-upload">
                         <input type="file" id="internshipReport" name="internshipReport" 
                                accept=".pdf,.doc,.docx" required>
                         <label for="internshipReport" class="file-upload-label">
-                            📄 Click to upload your report (PDF, DOC, DOCX - Max 10MB)
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div>Click to upload your report</div>
+                            <small style="opacity: 0.8;">PDF, DOC, DOCX files (Max 10MB)</small>
                         </label>
                     </div>
-                    <div id="fileInfo" class="file-info" style="display: none;"></div>
-                    <small style="color: #666; margin-top: 0.5rem; display: block;">
-                        Accepted formats: PDF, DOC, DOCX files (Max 10MB)
+                    <div id="fileInfo" class="file-info"></div>
+                    <small style="color: #666; margin-top: 10px; display: block; font-style: italic;">
+                        <i class="fas fa-info-circle"></i>
+                        Accepted formats: PDF, DOC, DOCX files (Maximum size: 10MB)
                     </small>
                 </div>
 
+                <!-- Declaration -->
                 <div class="declaration">
                     <label>
                         <input type="checkbox" id="declaration" name="declaration" required>
-                        <span>I declare that the information provided above is true and accurate to the best of my knowledge. 
-                              I understand that any false information may result in the rejection of my internship report.</span>
+                        <span>
+                            <strong>Declaration:</strong> I declare that the information provided above is true and accurate to the best of my knowledge. 
+                            I understand that any false information may result in the rejection of my internship report and could affect my academic standing. 
+                            The submitted report is my original work and reflects my genuine internship experience.
+                        </span>
                     </label>
                 </div>
 
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    📄 Submit Report
-                </button>
+                <!-- Submit Button -->
+                <div class="submit-container">
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Report
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -399,7 +641,7 @@
         let internshipData = null;
         let existingReport = null;
 
-        // Load user data and existing report on page load
+        // Initialize page
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 await checkAuthentication();
@@ -408,85 +650,155 @@
                 await loadExistingReport();
                 initializeForm();
             } catch (error) {
-                console.error('Error initializing form:', error);
-                alert('Error loading form. Please try logging in again.');
-                window.location.href = '/student';
+                console.error('Page initialization failed:', error);
+                showError(getErrorMessage(error));
             }
         });
 
         async function checkAuthentication() {
-            const response = await fetch('/api/session');
-            const data = await response.json();
+            try {
+                const response = await fetch('/api/session', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-            if (!data.success || data.userType !== 'student') {
-                throw new Error('Not authenticated as student');
+                if (!response.ok) throw new Error('Session check failed');
+
+                const data = await response.json();
+                if (!data.success || data.userType !== 'student') {
+                    throw new Error('Not authenticated as student');
+                }
+
+                userData = data.user;
+                return true;
+            } catch (error) {
+                throw error;
             }
-
-            userData = data.user;
         }
 
         async function loadUserData() {
-            const response = await fetch('/api/student-profile');
-            const data = await response.json();
+            try {
+                const response = await fetch('/api/student-profile', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-            if (data.success) {
-                const profile = data.profile;
+                if (!response.ok) throw new Error('Failed to load profile');
 
-                // Auto-populate user fields
-                document.getElementById('department').value = profile.department;
-                document.getElementById('name').value = profile.name;
-                document.getElementById('registerNumber').value = profile.registerNumber;
+                const data = await response.json();
+                if (data.success) {
+                    const profile = data.profile;
+
+                    // Auto-populate user fields
+                    document.getElementById('department').value = profile.department;
+                    document.getElementById('name').value = profile.name;
+                    document.getElementById('registerNumber').value = profile.registerNumber;
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                throw error;
             }
         }
 
         async function loadInternshipData() {
-            const response = await fetch('/api/internship-details');
-            const data = await response.json();
+            try {
+                const response = await fetch('/api/internship-details', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-            if (data.success && data.hasDetails) {
-                internshipData = data.details;
+                if (!response.ok) throw new Error('Failed to load internship data');
 
-                // Pre-populate from internship data
-                if (internshipData.internshipType) {
-                    const typeMap = {
-                        'offcampus': 'Industry Internship',
-                        'oncampus': 'On-Campus Internship'
-                    };
-                    document.getElementById('internshipType').value = typeMap[internshipData.internshipType] || 'Research Internship';
-                }
+                const data = await response.json();
+                if (data.success && data.hasDetails) {
+                    internshipData = data.details;
 
-                // Set start date from internship details
-                if (internshipData.startDate && internshipData.startDate.length > 0) {
-                    const startDate = internshipData.startDate.find(date => date);
-                    if (startDate) {
-                        document.getElementById('startDate').value = startDate;
+                    // Pre-populate from internship data
+                    if (internshipData.internshipType) {
+                        const typeMap = {
+                            'offcampus': 'Industry Internship',
+                            'oncampus': 'On-Campus Internship'
+                        };
+                        document.getElementById('internshipType').value = typeMap[internshipData.internshipType] || 'Research Internship';
                     }
-                }
 
-                // Set mentor from internship details
-                if (internshipData.supervisorName || internshipData.mentorName) {
-                    document.getElementById('mentor').value = internshipData.supervisorName || internshipData.mentorName;
-                }
+                    // Set start date from internship details
+                    if (internshipData.startDate && internshipData.startDate.length > 0) {
+                        const startDate = internshipData.startDate.find(date => date);
+                        if (startDate) {
+                            document.getElementById('startDate').value = startDate;
+                        }
+                    }
 
-                // Set role from internship details
-                if (internshipData.jobTitle || internshipData.projectTitle) {
-                    document.getElementById('internshipRole').value = internshipData.jobTitle || internshipData.projectTitle;
+                    // Set mentor from internship details
+                    if (internshipData.supervisorName || internshipData.mentorName) {
+                        document.getElementById('mentor').value = internshipData.supervisorName || internshipData.mentorName;
+                    }
+
+                    // Set role from internship details
+                    if (internshipData.jobTitle || internshipData.projectTitle) {
+                        document.getElementById('internshipRole').value = internshipData.jobTitle || internshipData.projectTitle;
+                    }
+                } else {
+                    console.log('No internship details found - user should submit details first');
                 }
+            } catch (error) {
+                console.error('Error loading internship data:', error);
+                // Non-critical error for report form
             }
         }
 
         async function loadExistingReport() {
-            const response = await fetch('/api/internship-report');
-            const data = await response.json();
+            try {
+                const response = await fetch('/api/internship-report', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-            if (data.success && data.hasReport) {
-                existingReport = data.report;
-                document.getElementById('submitBtn').textContent = '📄 Update Report';
+                if (!response.ok) throw new Error('Failed to load existing report');
+
+                const data = await response.json();
+                if (data.success && data.hasReport) {
+                    existingReport = data.report;
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-sync-alt"></i> Update Report';
+                }
+            } catch (error) {
+                console.error('Error loading existing report:', error);
+                // Non-critical error
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('reportForm').style.display = 'none';
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-container';
+            errorDiv.innerHTML = `
+                <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
+                    ${message}
+                </div>
+                <button class="submit-btn" onclick="window.location.href='/student'">
+                    <i class="fas fa-home"></i> Return to Login
+                </button>
+            `;
+
+            document.querySelector('.form-container').appendChild(errorDiv);
+        }
+
+        function getErrorMessage(error) {
+            if (error.message.includes('Not authenticated')) {
+                return 'Your session has expired. Please login again to continue.';
+            } else if (error.message.includes('Network')) {
+                return 'Network connection error. Please check your internet connection and try again.';
+            } else {
+                return 'An error occurred while loading the form. Please refresh the page and try again.';
             }
         }
 
         function initializeForm() {
-            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('loadingContainer').style.display = 'none';
             document.getElementById('reportForm').style.display = 'block';
 
             // Populate existing report data if available
@@ -500,40 +812,59 @@
 
             ratingSlider.addEventListener('input', function() {
                 ratingValue.textContent = this.value;
-            });
 
-            // File upload handler
-            document.getElementById('internshipReport').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                const fileInfo = document.getElementById('fileInfo');
-
-                if (file) {
-                    const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
-                    fileInfo.innerHTML = `Selected: ${file.name} (${sizeInMB} MB)`;
-                    fileInfo.style.display = 'block';
-
-                    // Check file size
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert('File size exceeds 10MB limit. Please choose a smaller file.');
-                        this.value = '';
-                        fileInfo.style.display = 'none';
-                    }
+                // Update color based on rating
+                const rating = parseInt(this.value);
+                if (rating <= 3) {
+                    ratingValue.style.color = '#e74c3c';
+                } else if (rating <= 6) {
+                    ratingValue.style.color = '#f39c12';
                 } else {
-                    fileInfo.style.display = 'none';
+                    ratingValue.style.color = '#27ae60';
                 }
             });
 
+            // File upload handler
+            document.getElementById('internshipReport').addEventListener('change', handleFileUpload);
+
             // Form submission
             document.getElementById('reportForm').addEventListener('submit', handleSubmit);
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            const fileInfo = document.getElementById('fileInfo');
+
+            if (file) {
+                const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                let iconClass = 'fas fa-file';
+
+                if (fileExtension === 'pdf') iconClass = 'fas fa-file-pdf file-type-pdf';
+                else if (fileExtension === 'doc' || fileExtension === 'docx') iconClass = 'fas fa-file-word file-type-doc';
+
+                fileInfo.innerHTML = `
+                    <i class="${iconClass}"></i>
+                    Selected: <strong>${file.name}</strong> (${sizeInMB} MB)
+                `;
+                fileInfo.style.display = 'block';
+
+                // Check file size
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File size exceeds 10MB limit. Please choose a smaller file.');
+                    e.target.value = '';
+                    fileInfo.style.display = 'none';
+                }
+            } else {
+                fileInfo.style.display = 'none';
+            }
         }
 
         function populateExistingReport() {
             const report = existingReport;
 
             // Populate form fields
-            const fields = [
-                'internshipType', 'internshipRole', 'mentor', 'summary'
-            ];
+            const fields = ['internshipType', 'internshipRole', 'mentor', 'summary'];
 
             fields.forEach(field => {
                 const element = document.getElementById(field);
@@ -549,8 +880,21 @@
 
             // Handle rating
             if (report.rating) {
-                document.getElementById('rating').value = report.rating;
-                document.getElementById('ratingValue').textContent = report.rating;
+                const ratingSlider = document.getElementById('rating');
+                const ratingValue = document.getElementById('ratingValue');
+
+                ratingSlider.value = report.rating;
+                ratingValue.textContent = report.rating;
+
+                // Update color
+                const rating = parseInt(report.rating);
+                if (rating <= 3) {
+                    ratingValue.style.color = '#e74c3c';
+                } else if (rating <= 6) {
+                    ratingValue.style.color = '#f39c12';
+                } else {
+                    ratingValue.style.color = '#27ae60';
+                }
             }
 
             // Handle declaration
@@ -560,12 +904,19 @@
 
             // Show file info if exists
             if (report.reportFilename) {
-                document.getElementById('fileInfo').innerHTML = `Current file: Internship Report (uploaded ${new Date(report.submittedAt).toLocaleDateString()})`;
+                document.getElementById('fileInfo').innerHTML = `
+                    <i class="fas fa-file-alt"></i>
+                    Current file: <strong>Internship Report</strong> (uploaded ${new Date(report.submittedAt).toLocaleDateString()})
+                `;
                 document.getElementById('fileInfo').style.display = 'block';
 
                 // Make file upload optional for updates
                 document.getElementById('internshipReport').required = false;
-                document.querySelector('.file-upload-label').innerHTML = '📄 Click to upload new report (optional for update)';
+                document.querySelector('.file-upload-label').innerHTML = `
+                    <i class="fas fa-sync-alt"></i>
+                    <div>Click to upload new report (optional)</div>
+                    <small style="opacity: 0.8;">PDF, DOC, DOCX files (Max 10MB)</small>
+                `;
             }
         }
 
@@ -573,7 +924,7 @@
             e.preventDefault();
 
             const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.textContent;
+            const originalHTML = submitBtn.innerHTML;
 
             // Validate required file upload for new submissions
             if (!existingReport && !document.getElementById('internshipReport').files[0]) {
@@ -583,7 +934,7 @@
 
             try {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
                 const formData = new FormData(e.target);
 
@@ -592,24 +943,51 @@
 
                 const response = await fetch('/submit-internship-report', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    credentials: 'include'
                 });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
 
                 const data = await response.json();
 
                 if (data.success) {
-                    alert(data.message);
-                    window.location.href = data.redirectUrl || '/student-dashboard';
+                    // Show success message
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'success-message';
+                    successMessage.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        ${data.message}
+                    `;
+
+                    document.querySelector('.form-container').insertBefore(
+                        successMessage, 
+                        document.getElementById('reportForm')
+                    );
+
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl || '/student-dashboard';
+                    }, 2000);
                 } else {
-                    throw new Error(data.message);
+                    throw new Error(data.message || 'Submission failed');
                 }
 
             } catch (error) {
                 console.error('Submission error:', error);
-                alert('Error submitting report: ' + error.message);
+
+                if (error.message.includes('401') || error.message.includes('Please login')) {
+                    alert('Your session has expired. Please login again.');
+                    window.location.href = '/student';
+                } else {
+                    alert('Error submitting report: ' + error.message);
+                }
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
+                submitBtn.innerHTML = originalHTML;
             }
         }
     </script>
