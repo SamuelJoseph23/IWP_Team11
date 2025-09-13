@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - Christ University Internship Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,89 +14,229 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            background: #f5f6fa;
+            color: #2c3e50;
+            line-height: 1.6;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            margin: 0;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+            background: #f5f6fa;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        .welcome-text h2 {
+            color: #2c3e50;
+            margin: 0;
         }
 
-        .header .user-info {
-            text-align: right;
+        .welcome-text p {
+            color: #7f8c8d;
+            margin: 0;
         }
 
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 25px;
             cursor: pointer;
-            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
             background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            min-width: 150px;
+            z-index: 1001;
+            display: none;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Dashboard specific styles */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
         }
 
-        .card:hover {
+        .stat-card:hover {
             transform: translateY(-5px);
         }
 
-        .card h3 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 15px;
         }
 
-        .card p {
-            color: #666;
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        .stat-card .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card .stat-icon.green {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .stat-card .stat-icon.orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card .stat-icon.purple {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin: 0;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 0.3rem 0.8rem;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .status-completed {
@@ -113,145 +254,189 @@
             color: #721c24;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        .btn:hover {
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
             background: #6c757d;
+            color: white;
         }
 
         .btn-secondary:hover {
             background: #5a6268;
         }
 
-        .profile-section {
+        .recent-activities {
             background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
 
-        .profile-section h2 {
-            color: #333;
-            margin-bottom: 1rem;
+        .section-header {
             border-bottom: 2px solid #667eea;
-            padding-bottom: 0.5rem;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        .profile-grid {
+        .section-header h3 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .activity-details h4 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .activity-details p {
+            margin: 5px 0 0 0;
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+
+        /* Profile section styles */
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .profile-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
-        .profile-item {
+        .info-item {
             display: flex;
             flex-direction: column;
         }
 
-        .profile-label {
+        .info-label {
             font-weight: 600;
-            color: #555;
-            margin-bottom: 0.25rem;
+            color: #7f8c8d;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
-        .profile-value {
-            color: #333;
-            padding: 0.5rem;
+        .info-value {
+            color: #2c3e50;
+            font-size: 16px;
+            padding: 10px;
             background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 3px solid #667eea;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
         }
 
-        .details-section {
+        /* Details section styles */
+        .details-card {
             background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .details-section h3 {
-            color: #333;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 0.5rem;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
 
         .details-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
+            gap: 20px;
         }
 
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 0.25rem;
-        }
-
-        .detail-value {
-            color: #333;
-            padding: 0.5rem;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 3px solid #667eea;
-        }
-
-        .file-info {
+        .file-attachment {
             background: #e8f4fd;
-            padding: 1rem;
+            padding: 15px;
             border-radius: 8px;
             border-left: 4px solid #007bff;
-            margin-top: 1rem;
+            margin-top: 15px;
         }
 
-        .file-info .file-name {
-            font-weight: 500;
+        .file-attachment .file-name {
+            font-weight: 600;
             color: #007bff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .file-info .file-date {
-            font-size: 0.8rem;
-            color: #666;
+        .file-attachment .file-date {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
         }
 
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+            margin-bottom: 15px;
         }
 
         @keyframes spin {
@@ -259,141 +444,451 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .quick-action-btn {
+            background: white;
+            border: 2px solid #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .quick-action-btn i {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
 
-            .header .user-info {
-                text-align: center;
-                margin-top: 1rem;
+            .sidebar.mobile-open {
+                transform: translateX(0);
             }
 
-            .dashboard-cards {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-bar {
+                padding: 15px 20px;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .dashboard-stats {
                 grid-template-columns: 1fr;
             }
+
+            .profile-info,
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            z-index: 1002;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            border-left-color: #dc3545;
+        }
+
+        .notification.warning {
+            border-left-color: #ffc107;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Student Dashboard</h1>
-                <p>Welcome back, <span id="studentName">Loading...</span></p>
-            </div>
-            <div class="user-info">
-                <div>Logged in as: <strong id="userName">Loading...</strong></div>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Student Portal</h3>
+            <p id="studentNameSidebar">Loading...</p>
         </div>
-
-        <!-- Profile Section -->
-        <div class="profile-section" style="display: none;" id="profileSection">
-            <h2>Your Profile</h2>
-            <div class="profile-grid">
-                <div class="profile-item">
-                    <span class="profile-label">Register Number:</span>
-                    <span class="profile-value" id="registerNumber">-</span>
-                </div>
-                <div class="profile-item">
-                    <span class="profile-label">Department:</span>
-                    <span class="profile-value" id="department">-</span>
-                </div>
-                <div class="profile-item">
-                    <span class="profile-label">Email:</span>
-                    <span class="profile-value" id="email">-</span>
-                </div>
-                <div class="profile-item">
-                    <span class="profile-label">Phone:</span>
-                    <span class="profile-value" id="phone">-</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Cards -->
-        <div class="dashboard-cards">
-            <!-- Internship Details Card -->
-            <div class="card">
-                <h3>📋 Internship Details</h3>
-                <div class="status-badge" id="internshipStatus">Checking...</div>
-                <p id="internshipInfo">Loading internship information...</p>
-                <button class="btn" id="internshipBtn" onclick="handleInternshipAction()">
-                    Submit Details
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <button class="nav-link active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
                 </button>
-            </div>
-
-            <!-- Internship Report Card -->
-            <div class="card">
-                <h3>📄 Internship Report</h3>
-                <div class="status-badge" id="reportStatus">Checking...</div>
-                <p id="reportInfo">Loading report information...</p>
-                <button class="btn" id="reportBtn" onclick="handleReportAction()">
-                    Submit Report
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    My Profile
                 </button>
-            </div>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="internship-details">
+                    <i class="fas fa-building"></i>
+                    Internship Details
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="internship-report">
+                    <i class="fas fa-file-alt"></i>
+                    Internship Report
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="documents">
+                    <i class="fas fa-folder"></i>
+                    My Documents
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="help">
+                    <i class="fas fa-question-circle"></i>
+                    Help & Support
+                </button>
+            </li>
+        </ul>
+    </nav>
 
-            <!-- Quick Actions Card -->
-            <div class="card">
-                <h3>🚀 Quick Actions</h3>
-                <p>Access your most common tasks quickly.</p>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
-                    <button class="btn btn-secondary" onclick="window.location.href='/internship-details'">
-                        Update Details
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="welcome-text">
+                <h2 id="pageTitle">Dashboard</h2>
+                <p>Welcome back, <span id="welcomeName">Student</span></p>
+            </div>
+            <div class="user-profile">
+                <div class="profile-dropdown">
+                    <button class="profile-btn" onclick="toggleProfileMenu()">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="topBarName">Student</span>
+                        <i class="fas fa-chevron-down"></i>
                     </button>
-                    <button class="btn btn-secondary" onclick="window.location.href='/internship-report'">
-                        Submit Report
-                    </button>
+                    <div class="dropdown-menu" id="profileDropdown">
+                        <button class="dropdown-item" onclick="showProfile()">
+                            <i class="fas fa-user"></i> View Profile
+                        </button>
+                        <button class="dropdown-item" onclick="showSettings()">
+                            <i class="fas fa-cog"></i> Settings
+                        </button>
+                        <button class="dropdown-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Internship Details Section (Hidden by default) -->
-        <div class="details-section" id="internshipDetailsSection" style="display: none;">
-            <h3>📋 Your Internship Details</h3>
-            <div id="internshipDetailsContent">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Loading internship details...
-                </div>
-            </div>
-        </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="page-section active">
+                <!-- Dashboard Stats -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="stat-number" id="internshipStatusNumber">-</h3>
+                        <p class="stat-label">Internship Status</p>
+                        <div class="status-badge" id="internshipStatusBadge">Checking...</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="internshipActionBtn" onclick="handleInternshipAction()">
+                                Submit Details
+                            </button>
+                        </div>
+                    </div>
 
-        <!-- Report Details Section (Hidden by default) -->
-        <div class="details-section" id="reportDetailsSection" style="display: none;">
-            <h3>📄 Your Internship Report</h3>
-            <div id="reportDetailsContent">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Loading report details...
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="stat-number" id="reportStatusNumber">-</h3>
+                        <p class="stat-label">Report Status</p>
+                        <div class="status-badge" id="reportStatusBadge">Checking...</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="reportActionBtn" onclick="handleReportAction()">
+                                Submit Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <h3 class="stat-number" id="daysRemaining">-</h3>
+                        <p class="stat-label">Days Remaining</p>
+                        <div class="status-badge status-pending" id="timeStatusBadge">Calculating...</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="stat-number" id="completionProgress">0%</h3>
+                        <p class="stat-label">Overall Progress</p>
+                        <div class="status-badge" id="progressBadge">In Progress</div>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Recent Activities -->
+                <div class="recent-activities">
+                    <div class="section-header">
+                        <h3>Recent Activities</h3>
+                    </div>
+                    <div id="activitiesList">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading activities...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="recent-activities">
+                    <div class="section-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="#" class="quick-action-btn" onclick="navigateToInternshipDetails()">
+                            <i class="fas fa-plus-circle"></i>
+                            <div>Add/Update Details</div>
+                        </a>
+                        <a href="#" class="quick-action-btn" onclick="navigateToReport()">
+                            <i class="fas fa-upload"></i>
+                            <div>Submit Report</div>
+                        </a>
+                        <a href="#" class="quick-action-btn" onclick="showDocuments()">
+                            <i class="fas fa-download"></i>
+                            <div>Download Documents</div>
+                        </a>
+                        <a href="#" class="quick-action-btn" onclick="showHelp()">
+                            <i class="fas fa-headset"></i>
+                            <div>Get Support</div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="page-section">
+                <div class="profile-card">
+                    <div class="section-header">
+                        <h3>My Profile</h3>
+                    </div>
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <label class="info-label">Register Number</label>
+                            <div class="info-value" id="profileRegisterNumber">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Full Name</label>
+                            <div class="info-value" id="profileName">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Department</label>
+                            <div class="info-value" id="profileDepartment">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Email Address</label>
+                            <div class="info-value" id="profileEmail">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Phone Number</label>
+                            <div class="info-value" id="profilePhone">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Account Created</label>
+                            <div class="info-value" id="profileCreated">-</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Internship Details Section -->
+            <section id="internship-details-section" class="page-section">
+                <div class="details-card">
+                    <div class="section-header">
+                        <h3>Internship Details</h3>
+                    </div>
+                    <div id="internshipDetailsContent">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading internship details...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Internship Report Section -->
+            <section id="internship-report-section" class="page-section">
+                <div class="details-card">
+                    <div class="section-header">
+                        <h3>Internship Report</h3>
+                    </div>
+                    <div id="internshipReportContent">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading report details...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documents Section -->
+            <section id="documents-section" class="page-section">
+                <div class="details-card">
+                    <div class="section-header">
+                        <h3>My Documents</h3>
+                    </div>
+                    <div id="documentsContent">
+                        <p>Your uploaded documents will appear here once you submit your internship details and reports.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Help Section -->
+            <section id="help-section" class="page-section">
+                <div class="details-card">
+                    <div class="section-header">
+                        <h3>Help & Support</h3>
+                    </div>
+                    <div class="help-content">
+                        <h4>Frequently Asked Questions</h4>
+                        <div class="help-item" style="margin-bottom: 20px;">
+                            <h5>How do I submit my internship details?</h5>
+                            <p>Click on "Internship Details" in the sidebar or use the quick action button. Fill out all required fields and upload your offer letter.</p>
+                        </div>
+                        <div class="help-item" style="margin-bottom: 20px;">
+                            <h5>When should I submit my internship report?</h5>
+                            <p>Submit your report after completing your internship. Make sure to include a detailed summary and rate your experience.</p>
+                        </div>
+                        <div class="help-item" style="margin-bottom: 20px;">
+                            <h5>What file formats are accepted?</h5>
+                            <p>We accept PDF, DOC, and DOCX files. Maximum file size is 10MB.</p>
+                        </div>
+                        <div class="help-item" style="margin-bottom: 20px;">
+                            <h5>Need more help?</h5>
+                            <p>Contact the internship office at <strong>internship@christuniversity.in</strong> or call <strong>+91-80-4012-9400</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+    </main>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div id="notificationMessage">Message</div>
     </div>
 
     <script>
+        // Global variables
         let userData = null;
         let internshipData = null;
         let reportData = null;
+        let currentPage = 'dashboard';
 
-        // Check authentication and load user data on page load
+        // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                await checkAuthentication();
-                await loadUserProfile();
-                await loadInternshipStatus();
-                await loadReportStatus();
+                await initializeDashboard();
             } catch (error) {
-                console.error('Error initializing dashboard:', error);
-                alert('Error loading dashboard. Please try logging in again.');
-                window.location.href = '/student';
+                console.error('Dashboard initialization failed:', error);
+                showNotification('Error loading dashboard. Please refresh the page.', 'error');
             }
         });
 
+        // Initialize dashboard
+        async function initializeDashboard() {
+            showNotification('Loading dashboard...', 'info');
+
+            try {
+                // Check authentication
+                await checkAuthentication();
+
+                // Load all data
+                await loadUserProfile();
+                await loadInternshipStatus();
+                await loadReportStatus();
+
+                // Update UI
+                updateDashboardStats();
+                loadRecentActivities();
+
+                showNotification('Dashboard loaded successfully!', 'success');
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        // Authentication check
         async function checkAuthentication() {
             try {
-                const response = await fetch('/api/session');
+                const response = await fetch('/api/session', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Session check failed');
+                }
+
                 const data = await response.json();
 
                 if (!data.success || data.userType !== 'student') {
@@ -401,110 +896,392 @@
                 }
 
                 userData = data.user;
-                document.getElementById('studentName').textContent = userData.name;
-                document.getElementById('userName').textContent = userData.name;
+
+                // Update UI with user data
+                document.getElementById('studentNameSidebar').textContent = userData.name;
+                document.getElementById('welcomeName').textContent = userData.name;
+                document.getElementById('topBarName').textContent = userData.name;
+
+                return true;
             } catch (error) {
+                console.error('Authentication failed:', error);
+                window.location.href = '/student';
                 throw error;
             }
         }
 
+        // Load user profile
         async function loadUserProfile() {
             try {
-                const response = await fetch('/api/student-profile');
+                const response = await fetch('/api/student-profile', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load profile');
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
                     const profile = data.profile;
-                    document.getElementById('registerNumber').textContent = profile.registerNumber;
-                    document.getElementById('department').textContent = profile.department;
-                    document.getElementById('email').textContent = profile.email;
-                    document.getElementById('phone').textContent = profile.phone || 'Not provided';
 
-                    // Show profile section
-                    document.getElementById('profileSection').style.display = 'block';
+                    // Update profile section
+                    document.getElementById('profileRegisterNumber').textContent = profile.registerNumber;
+                    document.getElementById('profileName').textContent = profile.name;
+                    document.getElementById('profileDepartment').textContent = profile.department;
+                    document.getElementById('profileEmail').textContent = profile.email;
+                    document.getElementById('profilePhone').textContent = profile.phone || 'Not provided';
+                    document.getElementById('profileCreated').textContent = new Date(profile.createdAt).toLocaleDateString();
                 }
             } catch (error) {
                 console.error('Error loading profile:', error);
             }
         }
 
+        // Load internship status
         async function loadInternshipStatus() {
             try {
-                const response = await fetch('/api/internship-details');
-                const data = await response.json();
+                const response = await fetch('/api/internship-details', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-                const statusElement = document.getElementById('internshipStatus');
-                const infoElement = document.getElementById('internshipInfo');
-                const btnElement = document.getElementById('internshipBtn');
+                if (!response.ok) {
+                    throw new Error('Failed to load internship status');
+                }
+
+                const data = await response.json();
 
                 if (data.success && data.hasDetails) {
                     internshipData = data.details;
-                    statusElement.textContent = 'Completed';
-                    statusElement.className = 'status-badge status-completed';
-                    infoElement.textContent = `Submitted on ${new Date(internshipData.submittedAt).toLocaleDateString()}`;
-                    btnElement.textContent = 'Update Details';
-                    btnElement.className = 'btn btn-secondary';
-
-                    // Show details section
-                    displayInternshipDetails(internshipData);
                 } else {
-                    statusElement.textContent = 'Not Started';
-                    statusElement.className = 'status-badge status-not-started';
-                    infoElement.textContent = 'Please submit your internship details to get started.';
-                    btnElement.textContent = 'Submit Details';
-                    btnElement.className = 'btn';
+                    internshipData = null;
                 }
             } catch (error) {
                 console.error('Error loading internship status:', error);
-                document.getElementById('internshipStatus').textContent = 'Error';
-                document.getElementById('internshipInfo').textContent = 'Failed to load status';
             }
         }
 
+        // Load report status
         async function loadReportStatus() {
             try {
-                const response = await fetch('/api/internship-report');
-                const data = await response.json();
+                const response = await fetch('/api/internship-report', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
 
-                const statusElement = document.getElementById('reportStatus');
-                const infoElement = document.getElementById('reportInfo');
-                const btnElement = document.getElementById('reportBtn');
+                if (!response.ok) {
+                    throw new Error('Failed to load report status');
+                }
+
+                const data = await response.json();
 
                 if (data.success && data.hasReport) {
                     reportData = data.report;
-                    statusElement.textContent = 'Completed';
-                    statusElement.className = 'status-badge status-completed';
-                    infoElement.textContent = `Submitted on ${new Date(reportData.submittedAt).toLocaleDateString()}`;
-                    btnElement.textContent = 'Update Report';
-                    btnElement.className = 'btn btn-secondary';
-
-                    // Show details section
-                    displayReportDetails(reportData);
-                } else if (!internshipData) {
-                    statusElement.textContent = 'Pending';
-                    statusElement.className = 'status-badge status-pending';
-                    infoElement.textContent = 'Complete internship details first.';
-                    btnElement.textContent = 'Submit Report';
-                    btnElement.disabled = true;
-                    btnElement.className = 'btn btn-secondary';
                 } else {
-                    statusElement.textContent = 'Not Started';
-                    statusElement.className = 'status-badge status-not-started';
-                    infoElement.textContent = 'Submit your internship report after completion.';
-                    btnElement.textContent = 'Submit Report';
-                    btnElement.className = 'btn';
+                    reportData = null;
                 }
             } catch (error) {
                 console.error('Error loading report status:', error);
-                document.getElementById('reportStatus').textContent = 'Error';
-                document.getElementById('reportInfo').textContent = 'Failed to load status';
             }
         }
 
-        function displayInternshipDetails(details) {
-            const section = document.getElementById('internshipDetailsSection');
+        // Update dashboard stats
+        function updateDashboardStats() {
+            // Internship status
+            const internshipStatusNumber = document.getElementById('internshipStatusNumber');
+            const internshipStatusBadge = document.getElementById('internshipStatusBadge');
+            const internshipActionBtn = document.getElementById('internshipActionBtn');
+
+            if (internshipData) {
+                internshipStatusNumber.textContent = 'Completed';
+                internshipStatusBadge.textContent = 'Submitted';
+                internshipStatusBadge.className = 'status-badge status-completed';
+                internshipActionBtn.textContent = 'Update Details';
+                internshipActionBtn.className = 'btn btn-secondary';
+            } else {
+                internshipStatusNumber.textContent = 'Pending';
+                internshipStatusBadge.textContent = 'Not Started';
+                internshipStatusBadge.className = 'status-badge status-not-started';
+                internshipActionBtn.textContent = 'Submit Details';
+                internshipActionBtn.className = 'btn btn-primary';
+            }
+
+            // Report status
+            const reportStatusNumber = document.getElementById('reportStatusNumber');
+            const reportStatusBadge = document.getElementById('reportStatusBadge');
+            const reportActionBtn = document.getElementById('reportActionBtn');
+
+            if (reportData) {
+                reportStatusNumber.textContent = 'Completed';
+                reportStatusBadge.textContent = 'Submitted';
+                reportStatusBadge.className = 'status-badge status-completed';
+                reportActionBtn.textContent = 'Update Report';
+                reportActionBtn.className = 'btn btn-secondary';
+            } else if (internshipData) {
+                reportStatusNumber.textContent = 'Pending';
+                reportStatusBadge.textContent = 'Ready';
+                reportStatusBadge.className = 'status-badge status-pending';
+                reportActionBtn.textContent = 'Submit Report';
+                reportActionBtn.className = 'btn btn-primary';
+            } else {
+                reportStatusNumber.textContent = 'Waiting';
+                reportStatusBadge.textContent = 'Blocked';
+                reportStatusBadge.className = 'status-badge status-not-started';
+                reportActionBtn.textContent = 'Submit Report';
+                reportActionBtn.className = 'btn btn-secondary';
+                reportActionBtn.disabled = true;
+            }
+
+            // Calculate days remaining and progress
+            calculateTimeAndProgress();
+        }
+
+        // Calculate time remaining and progress
+        function calculateTimeAndProgress() {
+            const daysRemainingEl = document.getElementById('daysRemaining');
+            const timeStatusBadge = document.getElementById('timeStatusBadge');
+            const completionProgress = document.getElementById('completionProgress');
+            const progressBadge = document.getElementById('progressBadge');
+
+            let progress = 0;
+            let daysRemaining = '-';
+            let timeStatus = 'status-pending';
+
+            // Calculate progress
+            if (internshipData) progress += 50;
+            if (reportData) progress += 50;
+
+            // Calculate days remaining if internship has end date
+            if (internshipData && internshipData.endDate) {
+                const endDate = new Date(internshipData.endDate.find(date => date) || internshipData.endDate[0]);
+                const today = new Date();
+                const diffTime = endDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays > 0) {
+                    daysRemaining = diffDays;
+                    timeStatus = diffDays < 7 ? 'status-not-started' : 'status-pending';
+                } else {
+                    daysRemaining = 'Completed';
+                    timeStatus = 'status-completed';
+                }
+            }
+
+            // Update UI
+            daysRemainingEl.textContent = daysRemaining;
+            timeStatusBadge.className = `status-badge ${timeStatus}`;
+
+            completionProgress.textContent = `${progress}%`;
+            progressBadge.className = `status-badge ${progress === 100 ? 'status-completed' : progress > 0 ? 'status-pending' : 'status-not-started'}`;
+        }
+
+        // Load recent activities
+        function loadRecentActivities() {
+            const activitiesList = document.getElementById('activitiesList');
+            let activities = [];
+
+            // Add activities based on data
+            if (internshipData) {
+                activities.push({
+                    icon: 'fas fa-building',
+                    color: '#667eea',
+                    title: 'Internship Details Submitted',
+                    description: `Submitted on ${new Date(internshipData.submittedAt).toLocaleDateString()}`,
+                    time: new Date(internshipData.submittedAt)
+                });
+            }
+
+            if (reportData) {
+                activities.push({
+                    icon: 'fas fa-file-alt',
+                    color: '#28a745',
+                    title: 'Internship Report Submitted',
+                    description: `Submitted on ${new Date(reportData.submittedAt).toLocaleDateString()}`,
+                    time: new Date(reportData.submittedAt)
+                });
+            }
+
+            // Add account creation activity
+            if (userData) {
+                activities.push({
+                    icon: 'fas fa-user-plus',
+                    color: '#6c757d',
+                    title: 'Account Created',
+                    description: 'Welcome to the internship portal',
+                    time: new Date() // Placeholder
+                });
+            }
+
+            // Sort by time (newest first)
+            activities.sort((a, b) => b.time - a.time);
+
+            // Generate HTML
+            if (activities.length > 0) {
+                activitiesList.innerHTML = activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: ${activity.color}">
+                            <i class="${activity.icon}"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>${activity.title}</h4>
+                            <p>${activity.description}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                activitiesList.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: #dee2e6">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>No recent activities</h4>
+                            <p>Start by submitting your internship details</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Navigation functions
+        function showPage(pageId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(pageId + '-section').classList.add('active');
+
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'profile': 'My Profile',
+                'internship-details': 'Internship Details',
+                'internship-report': 'Internship Report',
+                'documents': 'My Documents',
+                'help': 'Help & Support'
+            };
+            document.getElementById('pageTitle').textContent = titles[pageId] || 'Dashboard';
+
+            // Load section-specific data
+            loadSectionData(pageId);
+
+            currentPage = pageId;
+        }
+
+        // Load section-specific data
+        function loadSectionData(pageId) {
+            switch(pageId) {
+                case 'internship-details':
+                    loadInternshipDetailsSection();
+                    break;
+                case 'internship-report':
+                    loadReportDetailsSection();
+                    break;
+                case 'documents':
+                    loadDocumentsSection();
+                    break;
+            }
+        }
+
+        // Load internship details section
+        function loadInternshipDetailsSection() {
             const content = document.getElementById('internshipDetailsContent');
 
+            if (internshipData) {
+                content.innerHTML = generateInternshipDetailsHTML(internshipData);
+            } else {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-building" style="font-size: 48px; color: #dee2e6; margin-bottom: 20px;"></i>
+                        <h4>No Internship Details Found</h4>
+                        <p>You haven't submitted your internship details yet.</p>
+                        <button class="btn btn-primary" onclick="navigateToInternshipDetails()">
+                            Submit Internship Details
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Load report details section  
+        function loadReportDetailsSection() {
+            const content = document.getElementById('internshipReportContent');
+
+            if (reportData) {
+                content.innerHTML = generateReportDetailsHTML(reportData);
+            } else {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-file-alt" style="font-size: 48px; color: #dee2e6; margin-bottom: 20px;"></i>
+                        <h4>No Report Submitted</h4>
+                        <p>Submit your internship report after completing your internship.</p>
+                        <button class="btn btn-primary" onclick="navigateToReport()">
+                            Submit Internship Report
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Load documents section
+        function loadDocumentsSection() {
+            const content = document.getElementById('documentsContent');
+            let documents = [];
+
+            if (internshipData && internshipData.offerLetterOriginalName) {
+                documents.push({
+                    type: 'Offer Letter',
+                    name: internshipData.offerLetterOriginalName,
+                    date: internshipData.submittedAt,
+                    icon: 'fas fa-file-pdf'
+                });
+            }
+
+            if (reportData && reportData.reportFilename) {
+                documents.push({
+                    type: 'Internship Report',
+                    name: 'Internship Report',
+                    date: reportData.submittedAt,
+                    icon: 'fas fa-file-alt'
+                });
+            }
+
+            if (documents.length > 0) {
+                content.innerHTML = documents.map(doc => `
+                    <div class="file-attachment">
+                        <div class="file-name">
+                            <i class="${doc.icon}"></i>
+                            ${doc.type}: ${doc.name}
+                        </div>
+                        <div class="file-date">
+                            Uploaded: ${new Date(doc.date).toLocaleDateString()}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-folder-open" style="font-size: 48px; color: #dee2e6; margin-bottom: 20px;"></i>
+                        <h4>No Documents Found</h4>
+                        <p>Your uploaded documents will appear here once you submit your internship details and reports.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Generate internship details HTML
+        function generateInternshipDetailsHTML(details) {
             let html = '<div class="details-grid">';
 
             // Basic details
@@ -517,13 +1294,13 @@
                 html += createDetailItem('Company Type', details.companyType || '-');
                 html += createDetailItem('Job Title', details.jobTitle || '-');
                 html += createDetailItem('Work Mode', details.workMode || '-');
-                html += createDetailItem('Stipend', details.stipend || '-');
+                html += createDetailItem('Stipend', details.stipend ? `₹${details.stipend}` : '-');
                 html += createDetailItem('Supervisor Name', details.supervisorName || '-');
                 html += createDetailItem('Supervisor Email', details.supervisorEmail || '-');
             } else if (details.internshipType === 'oncampus') {
                 html += createDetailItem('University Department', details.universityDepartment || '-');
                 html += createDetailItem('Project Title', details.projectTitle || '-');
-                html += createDetailItem('Duration', details.internshipDuration + ' weeks' || '-');
+                html += createDetailItem('Duration', details.internshipDuration ? `${details.internshipDuration} weeks` : '-');
                 html += createDetailItem('Mentor Name', details.mentorName || '-');
                 html += createDetailItem('Mentor Email', details.mentorEmail || '-');
             }
@@ -543,21 +1320,31 @@
             // File information
             if (details.offerLetterOriginalName) {
                 html += `
-                    <div class="file-info">
-                        <div class="file-name">📄 ${details.offerLetterOriginalName}</div>
-                        <div class="file-date">Uploaded: ${new Date(details.submittedAt).toLocaleString()}</div>
+                    <div class="file-attachment">
+                        <div class="file-name">
+                            <i class="fas fa-file-pdf"></i>
+                            ${details.offerLetterOriginalName}
+                        </div>
+                        <div class="file-date">
+                            Uploaded: ${new Date(details.submittedAt).toLocaleString()}
+                        </div>
                     </div>
                 `;
             }
 
-            content.innerHTML = html;
-            section.style.display = 'block';
+            html += `
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="navigateToInternshipDetails()">
+                        Update Details
+                    </button>
+                </div>
+            `;
+
+            return html;
         }
 
-        function displayReportDetails(report) {
-            const section = document.getElementById('reportDetailsSection');
-            const content = document.getElementById('reportDetailsContent');
-
+        // Generate report details HTML
+        function generateReportDetailsHTML(report) {
             let html = '<div class="details-grid">';
             html += createDetailItem('Student Name', report.name || '-');
             html += createDetailItem('Department', report.department || '-');
@@ -570,9 +1357,9 @@
 
             if (report.summary) {
                 html += `
-                    <div class="detail-item" style="margin-top: 1rem;">
-                        <span class="detail-label">Summary:</span>
-                        <div class="detail-value">${report.summary}</div>
+                    <div class="info-item" style="margin-top: 20px;">
+                        <label class="info-label">Summary</label>
+                        <div class="info-value" style="white-space: pre-wrap;">${report.summary}</div>
                     </div>
                 `;
             }
@@ -580,58 +1367,143 @@
             // File information
             if (report.reportFilename) {
                 html += `
-                    <div class="file-info">
-                        <div class="file-name">📄 Internship Report</div>
-                        <div class="file-date">Uploaded: ${new Date(report.submittedAt).toLocaleString()}</div>
+                    <div class="file-attachment">
+                        <div class="file-name">
+                            <i class="fas fa-file-alt"></i>
+                            Internship Report
+                        </div>
+                        <div class="file-date">
+                            Uploaded: ${new Date(report.submittedAt).toLocaleString()}
+                        </div>
                     </div>
                 `;
             }
 
-            content.innerHTML = html;
-            section.style.display = 'block';
+            html += `
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="navigateToReport()">
+                        Update Report
+                    </button>
+                </div>
+            `;
+
+            return html;
         }
 
+        // Create detail item HTML
         function createDetailItem(label, value) {
             return `
-                <div class="detail-item">
-                    <span class="detail-label">${label}:</span>
-                    <span class="detail-value">${value}</span>
+                <div class="info-item">
+                    <label class="info-label">${label}</label>
+                    <div class="info-value">${value}</div>
                 </div>
             `;
         }
 
-        function handleInternshipAction() {
+        // Event handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-page]')) {
+                const pageId = e.target.getAttribute('data-page');
+                showPage(pageId);
+            }
+        });
+
+        // Navigation functions
+        function navigateToInternshipDetails() {
             window.location.href = '/internship-details';
         }
 
-        function handleReportAction() {
+        function navigateToReport() {
             if (!internshipData) {
-                alert('Please submit your internship details first.');
+                showNotification('Please submit your internship details first.', 'warning');
                 return;
             }
             window.location.href = '/internship-report';
         }
 
+        // Action handlers
+        function handleInternshipAction() {
+            navigateToInternshipDetails();
+        }
+
+        function handleReportAction() {
+            navigateToReport();
+        }
+
+        function showProfile() {
+            showPage('profile');
+            toggleProfileMenu();
+        }
+
+        function showSettings() {
+            showNotification('Settings functionality coming soon!', 'info');
+            toggleProfileMenu();
+        }
+
+        function showDocuments() {
+            showPage('documents');
+        }
+
+        function showHelp() {
+            showPage('help');
+        }
+
+        // UI functions
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.profile-dropdown')) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+
+            messageEl.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Logout function
         async function logout() {
             try {
                 const response = await fetch('/logout', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    window.location.href = data.redirectUrl || '/';
+                    showNotification('Logged out successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl || '/';
+                    }, 1000);
                 } else {
-                    alert('Logout failed. Please try again.');
+                    throw new Error(data.message);
                 }
             } catch (error) {
                 console.error('Logout error:', error);
-                // Force redirect even if logout request fails
-                window.location.href = '/';
+                showNotification('Logout failed. Redirecting...', 'error');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
             }
         }
     </script>
