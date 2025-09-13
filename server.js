@@ -523,6 +523,232 @@ app.get('/api/dashboard-stats', requireStudentAuth, async (req, res) => {
 });
 
 // =============================================================================
+// TEACHER DASHBOARD API ENDPOINTS
+// =============================================================================
+
+// Get all students with their internship status
+app.get('/api/teacher-dashboard-stats', requireFacultyAuth, async (req, res) => {
+    try {
+        console.log('👨‍🏫 Fetching teacher dashboard stats');
+
+        // Get total counts
+        const [totalStudents, studentsWithDetails, studentsWithReports] = await Promise.all([
+            Student.countDocuments(),
+            InternshipDetails.countDocuments(),
+            InternshipReport.countDocuments()
+        ]);
+
+        // Calculate completion rate
+        const detailsCompletionRate = totalStudents > 0 ? Math.round((studentsWithDetails / totalStudents) * 100) : 0;
+        const reportsCompletionRate = totalStudents > 0 ? Math.round((studentsWithReports / totalStudents) * 100) : 0;
+
+        // Get average rating
+        const reportStats = await InternshipReport.aggregate([
+            { $group: { _id: null, avgRating: { $avg: '$rating' }, count: { $sum: 1 } } }
+        ]);
+
+        const avgRating = reportStats.length > 0 ? Math.round(reportStats[0].avgRating * 10) / 10 : 0;
+
+        const stats = {
+            totalStudents,
+            studentsWithDetails,
+            studentsWithReports,
+            detailsCompletionRate,
+            reportsCompletionRate,
+            averageRating: avgRating,
+            // Mock data for UI consistency
+            tasksCompleted: studentsWithReports,
+            averageTaskScore: Math.round(avgRating * 10), // Convert 0-10 to 0-100 scale
+            projectsAssigned: totalStudents,
+            actionableInsights: Math.floor(totalStudents * 0.1) // 10% of students
+        };
+
+        res.json({ success: true, stats });
+    } catch (error) {
+        console.error('Error fetching teacher dashboard stats:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error while fetching teacher stats' 
+        });
+    }
+});
+
+// Get all students with their details and status
+app.get('/api/teacher-students', requireFacultyAuth, async (req, res) => {
+    try {
+        console.log('👨‍🏫 Fetching all students data');
+
+        // Get all students
+        const students = await Student.find().select('-password').sort({ createdAt: -1 });
+
+        // Get internship details and reports for all students
+        const studentsWithStatus = await Promise.all(students.map(async (student) => {
+            const [internshipDetails, internshipReport] = await Promise.all([
+                InternshipDetails.findOne({ registerNumber: student.registerNumber }),
+                InternshipReport.findOne({ registerNumber: student.registerNumber })
+            ]);
+
+            // Determine status
+            let status = 'Not Started';
+            let progress = 0;
+            let avgScore = 0;
+
+            if (internshipDetails && internshipReport) {
+                status = 'Completed';
+                progress = 100;
+                avgScore = internshipReport.rating ? Math.round(internshipReport.rating * 10) : 0; // Convert to 0-100 scale
+            } else if (internshipDetails) {
+                status = 'In Progress';
+                progress = 50;
+                avgScore = 50; // Partial completion score
+            }
+
+            return {
+                registerNumber: student.registerNumber,
+                name: student.name,
+                email: student.email,
+                department: student.department,
+                phone: student.phone,
+                createdAt: student.createdAt,
+                status,
+                progress,
+                avgScore,
+                projects: internshipDetails ? 1 : 0,
+                hasInternshipDetails: !!internshipDetails,
+                hasInternshipReport: !!internshipReport,
+                internshipType: internshipDetails?.internshipType || null,
+                companyName: internshipDetails?.companyName || null,
+                projectTitle: internshipDetails?.projectTitle || null,
+                submittedDetailsAt: internshipDetails?.submittedAt || null,
+                submittedReportAt: internshipReport?.submittedAt || null,
+                rating: internshipReport?.rating || null
+            };
+        }));
+
+        res.json({ success: true, students: studentsWithStatus });
+    } catch (error) {
+        console.error('Error fetching students data:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error while fetching students data' 
+        });
+    }
+});
+
+// Get individual student details for profile view
+app.get('/api/teacher-student/:registerNumber', requireFacultyAuth, async (req, res) => {
+    try {
+        const { registerNumber } = req.params;
+        console.log(`👨‍🏫 Fetching student details for: ${registerNumber}`);
+
+        const [student, internshipDetails, internshipReport] = await Promise.all([
+            Student.findOne({ registerNumber }).select('-password'),
+            InternshipDetails.findOne({ registerNumber }),
+            InternshipReport.findOne({ registerNumber })
+        ]);
+
+        if (!student) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Student not found' 
+            });
+        }
+
+        const studentProfile = {
+            ...student.toObject(),
+            internshipDetails,
+            internshipReport,
+            hasInternshipDetails: !!internshipDetails,
+            hasInternshipReport: !!internshipReport
+        };
+
+        res.json({ success: true, student: studentProfile });
+    } catch (error) {
+        console.error('Error fetching student details:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error while fetching student details' 
+        });
+    }
+});
+
+// Delete student account (admin function)
+app.delete('/api/teacher-student/:registerNumber', requireFacultyAuth, async (req, res) => {
+    try {
+        const { registerNumber } = req.params;
+        console.log(`👨‍🏫 Deleting student: ${registerNumber}`);
+
+        // Delete student and all related data
+        await Promise.all([
+            Student.deleteOne({ registerNumber }),
+            InternshipDetails.deleteOne({ registerNumber }),
+            InternshipReport.deleteOne({ registerNumber })
+        ]);
+
+        // Also delete uploaded files if they exist
+        const uploadsPath = path.join(__dirname, 'uploads', registerNumber);
+        if (fs.existsSync(uploadsPath)) {
+            fs.rmSync(uploadsPath, { recursive: true, force: true });
+        }
+
+        console.log(`✅ Student ${registerNumber} deleted successfully`);
+        res.json({ 
+            success: true, 
+            message: 'Student account and data deleted successfully' 
+        });
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error while deleting student' 
+        });
+    }
+});
+
+// Get department-wise statistics
+app.get('/api/teacher-department-stats', requireFacultyAuth, async (req, res) => {
+    try {
+        console.log('👨‍🏫 Fetching department-wise statistics');
+
+        const departmentStats = await Student.aggregate([
+            {
+                $group: {
+                    _id: '$department',
+                    totalStudents: { $sum: 1 },
+                    students: { $push: '$registerNumber' }
+                }
+            },
+            { $sort: { totalStudents: -1 } }
+        ]);
+
+        // Get completion stats for each department
+        const departmentData = await Promise.all(departmentStats.map(async (dept) => {
+            const [withDetails, withReports] = await Promise.all([
+                InternshipDetails.countDocuments({ registerNumber: { $in: dept.students } }),
+                InternshipReport.countDocuments({ registerNumber: { $in: dept.students } })
+            ]);
+
+            return {
+                department: dept._id,
+                totalStudents: dept.totalStudents,
+                studentsWithDetails: withDetails,
+                studentsWithReports: withReports,
+                detailsCompletionRate: Math.round((withDetails / dept.totalStudents) * 100),
+                reportsCompletionRate: Math.round((withReports / dept.totalStudents) * 100)
+            };
+        }));
+
+        res.json({ success: true, departments: departmentData });
+    } catch (error) {
+        console.error('Error fetching department statistics:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error while fetching department statistics' 
+        });
+    }
+});
+
+// =============================================================================
 // AUTHENTICATION ENDPOINTS
 // =============================================================================
 
@@ -744,6 +970,83 @@ app.post('/faculty-login', async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'Server error during faculty login' 
+        });
+    }
+});
+
+// Faculty registration
+app.post('/faculty-register', async (req, res) => {
+    try {
+        console.log('👨‍🏫 Faculty registration attempt');
+        let { employeeId, password, confirmPassword, name, email, department, phone } = req.body;
+
+        // Sanitize inputs
+        employeeId = sanitizeInput(employeeId);
+        password = sanitizeInput(password);
+        confirmPassword = sanitizeInput(confirmPassword);
+        name = sanitizeInput(name);
+        email = sanitizeInput(email);
+        department = sanitizeInput(department);
+        phone = sanitizeInput(phone);
+
+        // Validation
+        if (!employeeId || !password || !confirmPassword || !name || !email || !department) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'All required fields must be filled' 
+            });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Passwords do not match' 
+            });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Password must be at least 6 characters long' 
+            });
+        }
+
+        // Check for existing user
+        const existingUser = await Faculty.findOne({
+            $or: [{ employeeId }, { email }]
+        });
+
+        if (existingUser) {
+            const field = existingUser.employeeId === employeeId ? 'employee ID' : 'email';
+            return res.status(400).json({ 
+                success: false, 
+                message: `Account with this ${field} already exists` 
+            });
+        }
+
+        // Create new faculty
+        const newFaculty = new Faculty({
+            employeeId,
+            password,
+            name,
+            email,
+            department,
+            phone
+        });
+
+        await newFaculty.save();
+        console.log(`✅ New faculty registered: ${employeeId}`);
+
+        res.json({
+            success: true,
+            message: 'Faculty account created successfully! You can now login.',
+            redirectUrl: '/faculty'
+        });
+    } catch (error) {
+        console.error('❌ Faculty registration error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error during registration' 
         });
     }
 });
@@ -1020,7 +1323,9 @@ async function initializeServer() {
             console.log('     GET  /api/session         - Session status');
             console.log('     GET  /api/student-profile - Student profile');
             console.log('     GET  /api/internship-*    - Internship data');
+            console.log('     GET  /api/teacher-*       - Teacher dashboard data');
             console.log('     POST /student-login       - Student authentication');
+            console.log('     POST /faculty-login       - Faculty authentication');
             console.log('     POST /submit-*            - Form submissions');
             console.log('\n✅ Server ready for connections!');
         });
