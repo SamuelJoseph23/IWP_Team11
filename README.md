@@ -1,8 +1,8 @@
 # University Internship Management Portal
 
-A full-stack web application for managing student internships at Christ University. This portal provides separate dashboards for students and faculty members to track and manage internship details, submissions, and reports.
+A full-stack web application for managing student internships at a University. This portal provides separate dashboards for students and faculty members to track and manage internship details, submissions, and reports.
 
-## 🌟 Features
+## Features
 
 ### For Students
 - **Student Registration & Authentication** - Secure account creation and login system
@@ -39,10 +39,10 @@ A full-stack web application for managing student internships at Christ Universi
 - **Dotenv** - Environment variable management
 - **Connect-Mongo** - MongoDB session store
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-IWP_Team11/
+Main/
 ├── public/ # Frontend files
 │ ├── index.html # Landing page
 │ ├── student.html # Student login
@@ -67,7 +67,7 @@ IWP_Team11/
 ```
 
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v18.0.0 or higher)
@@ -109,7 +109,7 @@ Open your browser and navigate to:
 http://localhost:3000
 
 
-## 🔐 Default Credentials
+## Default Credentials
 
 ### Faculty Accounts (Pre-configured)
 - **Account 1:**
@@ -127,7 +127,7 @@ http://localhost:3000
 ### Student Accounts
 Students need to register through the student registration page.
 
-## 📋 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /student-login` - Student authentication
@@ -152,7 +152,7 @@ Students need to register through the student registration page.
 - `GET /api/teacher-department-stats` - Department-wise statistics
 - `DELETE /api/teacher-student/:registerNumber` - Delete student account
 
-## 📦 Database Schema
+## Database Schema
 
 ### Student Schema
 ```
@@ -222,7 +222,7 @@ submittedAt: Date (default: Date.now)
 ```
 
 
-## 🔒 Security Features
+## Security Features
 
 - Session-based authentication with MongoDB store
 - Password validation (minimum 6 characters)
@@ -233,7 +233,7 @@ submittedAt: Date (default: Date.now)
 - CORS configuration for secure cross-origin requests
 - HTTP-only cookies for session management
 
-## 🌐 Deployment
+## Deployment
 
 ### Railway Deployment
 
@@ -251,22 +251,16 @@ NODE_ENV=production
 PORT=3000
 
 
-## 👥 Contributors
+## Contributors
 
-- [**Samuel Joseph**](https://github.com/SamuelJoseph23) - Lead Developer
-- [**joe222318**](https://github.com/joe222318) - Contributor
+- [**Samuel Joseph**](https://github.com/SamuelJoseph23)
+- [**joe222318**](https://github.com/joe222318)
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License**.
 
-## 🎓 Academic Information
-
-**Course:** Internet and Web Programming (IWP)  
-**Institution:** Christ University  
-**Purpose:** Continuous Internal Assessment (CIA) Project
-
-## 🐛 Known Issues & Future Enhancements
+## Known Issues & Future Enhancements
 
 ### Current Limitations
 - Passwords are stored in plain text (consider bcrypt for production)
